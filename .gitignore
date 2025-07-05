@@ -48,12 +48,6 @@ lib/constants/env_config.dart
 .env.local
 .env.production
 
-# Firebase Configuration Files
-lib/firebase_options.dart
-firebase_config.json
-google-services.json
-GoogleService-Info.plist
-
 # IDE and Editor files
 .vscode/
 *.swp

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "884358901774",
+    "project_id": "dailykind-50ac3",
+    "storage_bucket": "dailykind-50ac3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884358901774:android:6c7a60fb2942902904cc5f",
+        "android_client_info": {
+          "package_name": "com.example.dailykind_fe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzeazjI2EC_KWVy0kIoEFzI-o1ArB4Utk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
