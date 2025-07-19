@@ -5,10 +5,10 @@ import 'dart:io' show Platform;
 class GoogleSignInService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
-    // Add serverClientId for iOS - hanya diperlukan jika menggunakan server-side authentication
-    // serverClientId: Platform.isIOS 
-    //     ? 'YOUR_IOS_CLIENT_ID_HERE'
-    //     : null,
+    // Add serverClientId for iOS
+    serverClientId: Platform.isIOS 
+        ? '884358901774-7c1fb80150ac3f604cc5f.apps.googleusercontent.com'
+        : null,
   );
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
