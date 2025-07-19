@@ -1,10 +1,14 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io' show Platform;
 
 class GoogleSignInService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
-    // For Flutter web, serverClientId is not supported
+    // Add serverClientId for iOS - hanya diperlukan jika menggunakan server-side authentication
+    // serverClientId: Platform.isIOS 
+    //     ? 'YOUR_IOS_CLIENT_ID_HERE'
+    //     : null,
   );
   final FirebaseAuth _auth = FirebaseAuth.instance;
 

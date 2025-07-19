@@ -45,5 +45,24 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.example.dailykindFe</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.example.dailykindFe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>REVERSED_CLIENT_ID</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.884358901774-7c1fb80150ac3f604cc5f</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
