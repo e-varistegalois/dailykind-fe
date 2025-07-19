@@ -1,3 +1,4 @@
+import 'package:dailykind_fe/screens/main_menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       home: AuthWrapper(),
       routes: {
         '/signin': (context) => SignInScreen(),
-        '/home': (context) => HomeScreen(),
+        '/mainmenu': (context) => MainMenuScreen(),
       },
     );
   }
@@ -46,7 +47,7 @@ class AuthWrapper extends StatelessWidget {
         }
         
         if (snapshot.hasData) {
-          return HomeScreen();
+          return MainMenuScreen();
         } else {
           return SignInScreen();
         }
