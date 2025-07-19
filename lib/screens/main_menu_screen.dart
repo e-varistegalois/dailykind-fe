@@ -4,6 +4,7 @@ import 'menu2_screen.dart';
 import 'home_screen.dart';
 import 'menu3_screen.dart';
 import 'menu4_screen.dart';
+import 'chatbot_screen.dart';
 
 class MainMenuScreen extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   final List<Widget> _pages = [
     Menu1Screen(), // Explore
     Menu2Screen(), // Kindness Walls
-    HomeScreen(),  // Chatbot
+    ChatbotScreen(), // Chatbot
     Menu3Screen(), // Bloom Board
     Menu4Screen(), // Profile
   ];

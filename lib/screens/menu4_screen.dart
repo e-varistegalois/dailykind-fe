@@ -75,6 +75,7 @@ class _Menu4ScreenState extends State<Menu4Screen> {
                     SizedBox(height: 16),
                     _buildInfoRow('Name', _user?.displayName ?? 'N/A'),
                     _buildInfoRow('Email', _user?.email ?? 'N/A'),
+                    _buildInfoRow('User ID', _user?.uid ?? 'N/A'),
                   ],
                 ),
               ),
