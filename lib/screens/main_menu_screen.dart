@@ -30,23 +30,23 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         onTap: (index) => setState(() => _selectedIndex = index),
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore), // Compass
+            icon: Icon(Icons.home_rounded), // Compass
             label: 'Explore',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard), // Board/Walls
+            icon: Icon(Icons.dashboard_rounded), // Board/Walls
             label: 'Kindness Walls',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble), // Chatbot
+            icon: Icon(Icons.chat_bubble_rounded), // Chatbot
             label: 'Chatbot',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_florist), // Flower
+            icon: Icon(Icons.local_florist_rounded), // Flower
             label: 'Bloom Board',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person), // Profile
+            icon: Icon(Icons.person_rounded), // Profile
             label: 'Profile',
           ),
         ],
