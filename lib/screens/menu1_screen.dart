@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/app_colors.dart';
 
 class Menu1Screen extends StatelessWidget {
   final List<Map<String, String>> items = [
@@ -21,50 +22,71 @@ class Menu1Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(16),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return Card(
-          margin: EdgeInsets.only(bottom: 16),
-          elevation: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.network(
-                item['image']!,
-                width: double.infinity,
-                height: 180,
-                fit: BoxFit.cover,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item['title']!,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      item['subtitle']!,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryPink,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Explore',
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: AppColors.secondaryPink,
+            fontSize: 22,
           ),
-        );
-      },
+        ),
+        centerTitle: true,
+      ),
+      body: ListView.builder(
+        padding: EdgeInsets.all(16),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return Card(
+            margin: EdgeInsets.only(bottom: 16),
+            elevation: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.network(
+                  item['image']!,
+                  width: double.infinity,
+                  height: 180,
+                  fit: BoxFit.cover,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['title']!,
+                        style: TextStyle(
+                          fontFamily: 'Tommy',
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.secondaryPink,
+                          fontSize: 20,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        item['subtitle']!,
+                        style: TextStyle(
+                          fontFamily: 'Tommy',
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.secondaryPink.withOpacity(0.7),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

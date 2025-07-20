@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/app_colors.dart';
 
 class Menu3Screen extends StatelessWidget {
   final List<String> flowers = [
@@ -12,7 +13,21 @@ class Menu3Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Bloom Board')),
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryYellow,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Bloom Board',
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: AppColors.secondaryYellow,
+            fontSize: 22,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
@@ -37,7 +52,11 @@ class Menu3Screen extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   'Flower ${index + 1}',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontFamily: 'Tommy',
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.secondaryYellow,
+                  ),
                 ),
               ],
             );

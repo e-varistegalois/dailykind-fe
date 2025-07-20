@@ -4,6 +4,7 @@ import '../models/session_summary.dart';
 import '../services/get_user_session.dart';
 import '../widgets/chat_sidebar.dart';
 import '../widgets/chat_area.dart';
+import '../constants/app_colors.dart';
 
 class ChatbotScreen extends StatefulWidget {
   @override
@@ -76,7 +77,18 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         },
       ),
       appBar: AppBar(
-        title: Text('Chatbot'),
+        backgroundColor: AppColors.primaryTosca,
+        elevation: 0,
+        automaticallyImplyLeading: true,
+        title: Text(
+          'Chatbot',
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: AppColors.secondaryTosca,
+            fontSize: 22,
+          ),
+        ),
         actions: [
           if (errorMessage != null)
             IconButton(
@@ -84,6 +96,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               onPressed: loadSessions,
             ),
         ],
+        centerTitle: true,
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())

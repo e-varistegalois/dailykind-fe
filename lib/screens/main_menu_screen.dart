@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../constants/app_colors.dart';
 import 'menu1_screen.dart';
 import 'menu2_screen.dart';
-import 'home_screen.dart';
+import 'chatbot_screen.dart';
 import 'menu3_screen.dart';
 import 'menu4_screen.dart';
-import 'chatbot_screen.dart';
+import 'landing_login_screen.dart';
 
 class MainMenuScreen extends StatefulWidget {
   @override
@@ -12,15 +14,53 @@ class MainMenuScreen extends StatefulWidget {
 }
 
 class _MainMenuScreenState extends State<MainMenuScreen> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    Menu1Screen(), // Explore
-    Menu2Screen(), // Kindness Walls
-    ChatbotScreen(), // Chatbot
-    Menu3Screen(), // Bloom Board
-    Menu4Screen(), // Profile
+    Menu1Screen(),
+    Menu2Screen(),
+    ChatbotScreen(),
+    Menu3Screen(),
+    Menu4Screen(),
   ];
+
+  final List<IconData> _filledIcons = [
+    Icons.emoji_nature_rounded,
+    Icons.dashboard_rounded,
+    Icons.chat_bubble_rounded,
+    Icons.local_florist_rounded,
+    Icons.person_rounded,
+  ];
+
+  final List<IconData> _regularIcons = [
+    Icons.emoji_nature_outlined,
+    Icons.dashboard_outlined,
+    Icons.chat_bubble_outline,
+    Icons.local_florist_outlined,
+    Icons.person_outline,
+  ];
+
+  final List<Color> _secondaryColors = [
+    AppColors.secondaryPink,
+    AppColors.secondaryBlue,
+    AppColors.secondaryTosca,
+    AppColors.secondaryYellow,
+    AppColors.secondaryGreen,
+  ];
+
+  void _onItemTapped(int index) {
+    final user = FirebaseAuth.instance.currentUser;
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (index >= 2 && user == null) {
+      showDialog(
+        context: context,
+        builder: (context) => LandingLoginScreen(),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,32 +68,34 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded), // Compass
-            label: 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_rounded), // Board/Walls
-            label: 'Kindness Walls',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_rounded), // Chatbot
-            label: 'Chatbot',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_florist_rounded), // Flower
-            label: 'Bloom Board',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_rounded), // Profile
-            label: 'Profile',
-          ),
-        ],
+        onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
+        showSelectedLabels: true,
+        showUnselectedLabels: false,
+        selectedItemColor: _secondaryColors[_selectedIndex],
+        items: List.generate(5, (index) {
+          return BottomNavigationBarItem(
+            icon: Icon(
+              _selectedIndex == index ? _filledIcons[index] : _regularIcons[index],
+              size: 28,
+              color: _secondaryColors[index].withOpacity(_selectedIndex == index ? 1 : 0.5),
+            ),
+            label: [
+              'Feeds',
+              'Kindness Walls',
+              'Chatbot',
+              'Bloom Board',
+              'Profile'
+            ][index],
+          );
+        }),
+        backgroundColor: Colors.white,
+        elevation: 8,
+        selectedLabelStyle: TextStyle(
+          fontFamily: 'Tommy',
+          fontWeight: FontWeight.w600,
+          color: _secondaryColors[_selectedIndex],
+        ),
       ),
     );
   }

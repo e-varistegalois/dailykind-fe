@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../services/google_sign_in_service.dart';
+import '../constants/app_colors.dart';
 
 class SignInScreen extends StatefulWidget {
   @override
@@ -28,7 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         );
 
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/mainmenu');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -53,13 +54,20 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const lilacColor = Color(0xFFC8A2C8); // Lilac
-
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Google Sign In'),
+        title: Text(
+          'Google Sign In',
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: AppColors.secondaryPink,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: lilacColor,
+        backgroundColor: AppColors.primaryPink,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -69,45 +77,52 @@ class _SignInScreenState extends State<SignInScreen> {
             Icon(
               Icons.account_circle,
               size: 100,
-              color: Colors.grey[600],
+              color: AppColors.secondaryPink.withOpacity(0.5),
             ),
             SizedBox(height: 32),
             Text(
               'Welcome!',
               style: TextStyle(
+                fontFamily: 'Tommy',
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+                color: AppColors.secondaryPink,
               ),
             ),
             SizedBox(height: 16),
             Text(
               'Please sign in to continue',
               style: TextStyle(
+                fontFamily: 'Tommy',
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: AppColors.secondaryPink.withOpacity(0.7),
               ),
             ),
             SizedBox(height: 48),
             _isLoading
-                ? CircularProgressIndicator()
+                ? CircularProgressIndicator(
+                    color: AppColors.secondaryPink,
+                  )
                 : ElevatedButton.icon(
                     onPressed: _signInWithGoogle,
-                    icon: FaIcon(FontAwesomeIcons.google, color: Colors.black),
+                    icon: FaIcon(FontAwesomeIcons.google, color: AppColors.secondaryPink),
                     label: Text(
                       'Sign in with Google',
                       style: TextStyle(
+                        fontFamily: 'Tommy',
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.secondaryPink,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: lilacColor,
-                      foregroundColor: Colors.black,
+                      backgroundColor: AppColors.primaryPink,
+                      foregroundColor: AppColors.secondaryPink,
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
+                      elevation: 0,
                     ),
                   ),
           ],

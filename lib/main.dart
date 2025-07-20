@@ -1,10 +1,8 @@
 import 'package:dailykind_fe/screens/main_menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'screens/sign_in_screen.dart';
-import 'screens/home_screen.dart';
 import 'screens/chatbot_screen.dart';
 
 void main() async {
@@ -15,6 +13,9 @@ void main() async {
   runApp(MyApp());
 }
 
+// Tambahkan warna brownFont
+const Color brownFont = Color(0xFF584839);
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,36 +24,49 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Tommy',
+        textTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'Tommy',
+          bodyColor: brownFont,
+          displayColor: brownFont,
+        ).copyWith(
+          bodyLarge: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: brownFont,
+          ),
+          bodyMedium: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: brownFont,
+          ),
+          bodySmall: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: brownFont,
+          ),
+          titleLarge: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: brownFont,
+          ),
+          titleMedium: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: brownFont,
+          ),
+          titleSmall: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: brownFont,
+          ),
+        ),
       ),
-      home: AuthWrapper(),
+      home: MainMenuScreen(),
       routes: {
         '/signin': (context) => SignInScreen(),
         '/mainmenu': (context) => MainMenuScreen(),
         '/chatbot': (context) => ChatbotScreen(),
-      },
-    );
-  }
-}
-
-class AuthWrapper extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-        
-        if (snapshot.hasData) {
-          return MainMenuScreen();
-        } else {
-          return SignInScreen();
-        }
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/app_colors.dart';
 
 class Menu2Screen extends StatelessWidget {
   final List<Map<String, String>> walls = [
@@ -30,48 +31,67 @@ class Menu2Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: GridView.builder(
-        itemCount: walls.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 0.85,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryBlue,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Kindness Walls',
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: AppColors.secondaryBlue,
+            fontSize: 22,
+          ),
         ),
-        itemBuilder: (context, index) {
-          final wall = walls[index];
-          return Card(
-            elevation: 3,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                    child: Image.network(
-                      wall['image']!,
-                      fit: BoxFit.cover,
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GridView.builder(
+          itemCount: walls.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.85,
+          ),
+          itemBuilder: (context, index) {
+            final wall = walls[index];
+            return Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                      child: Image.network(
+                        wall['image']!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    wall['title']!,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      wall['title']!,
+                      style: TextStyle(
+                        fontFamily: 'Tommy',
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.secondaryBlue,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
