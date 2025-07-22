@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../constants/app_colors.dart';
+import '../models/challenge.dart';
+import '../services/challenge_service.dart';
+import '../widgets/weekly_challenge.dart';
 
-class Menu1Screen extends StatelessWidget {
+class Menu1Screen extends StatefulWidget {
+  @override
+  State<Menu1Screen> createState() => _Menu1ScreenState();
+}
+
+class _Menu1ScreenState extends State<Menu1Screen> {
+  Challenge? challenge;
+  bool isLoadingChallenge = true;
+  String? challengeError;
+  User? currentUser;
+
   final List<Map<String, String>> items = [
     {
       'title': 'Explore Nature',
@@ -19,6 +33,44 @@ class Menu1Screen extends StatelessWidget {
       'image': 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Check user authentication status
+    currentUser = FirebaseAuth.instance.currentUser;
+    
+    // Only fetch challenge if user is logged in
+    if (currentUser != null) {
+      fetchWeeklyChallenge();
+    } else {
+      // User not logged in, set loading to false
+      setState(() {
+        isLoadingChallenge = false;
+      });
+    }
+  }
+
+  Future<void> fetchWeeklyChallenge() async {
+    try {
+      setState(() {
+        isLoadingChallenge = true;
+        challengeError = null;
+      });
+      
+      final fetchedChallenge = await ChallengeService.fetchActiveChallenge();
+      
+      setState(() {
+        challenge = fetchedChallenge;
+        isLoadingChallenge = false;
+      });
+    } catch (e) {
+      setState(() {
+        challengeError = e.toString();
+        isLoadingChallenge = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +92,59 @@ class Menu1Screen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),
-        itemCount: items.length,
+        itemCount: currentUser != null ? items.length + 1 : items.length, // +1 for challenge if logged in
         itemBuilder: (context, index) {
-          final item = items[index];
+          // First item is challenge (if user is logged in)
+          if (currentUser != null && index == 0) {
+            return Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 16),
+              child: isLoadingChallenge
+                  ? Card(
+                      child: Container(
+                        height: 100,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryPink,
+                          ),
+                        ),
+                      ),
+                    )
+                  : challengeError != null
+                      ? Card(
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 30,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Failed to load challenge',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                const SizedBox(height: 8),
+                                ElevatedButton(
+                                  onPressed: fetchWeeklyChallenge,
+                                  child: Text('Retry'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : challenge != null
+                          ? WeeklyChallenge(challenge: challenge!)
+                          : const SizedBox.shrink(),
+            );
+          }
+          
+          // Adjust index for explore items
+          final itemIndex = currentUser != null ? index - 1 : index;
+          final item = items[itemIndex];
+          
           return Card(
             margin: EdgeInsets.only(bottom: 16),
             elevation: 3,
