@@ -49,15 +49,6 @@ android {
             shrinkResources false
         }
     }
-
-    android.applicationVariants.configureEach { variant ->
-        variant.outputs.configureEach { output ->
-            output.processResources.doFirst { pm ->
-                pm.aaptOptions.cruncherEnabled = false
-                pm.aaptOptions.useNewCruncher = false
-            }
-        }
-    }
 }
 
 flutter {
