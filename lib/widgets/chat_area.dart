@@ -43,7 +43,7 @@ class _ChatAreaState extends State<ChatArea> {
         break;
       case 'humorous':
         icon = Icons.emoji_emotions;
-        color = Color(0xFFFF9800);
+        color = const Color(0xFFFF9800);
         break;
       default:
         icon = Icons.person;
@@ -104,7 +104,9 @@ class _ChatAreaState extends State<ChatArea> {
           }
         });
       }
-    } catch (e) {}
+    } catch (e) {
+      //
+    }
     setState(() {
       _isLoading = false;
     });
@@ -117,7 +119,7 @@ class _ChatAreaState extends State<ChatArea> {
       _messages.add({'role': 'user', 'content': message});
     });
 
-    final apiUrl = '$apiBaseUrl/chatbot/send-message';
+    const apiUrl = '$apiBaseUrl/chatbot/send-message';
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
@@ -168,7 +170,7 @@ class _ChatAreaState extends State<ChatArea> {
         _buildPersonalityImage(widget.personality),
         Expanded(
           child: _isLoading
-              ? Center(child: CircularProgressIndicator(color: AppColors.secondaryTosca))
+              ? const Center(child: CircularProgressIndicator(color: AppColors.secondaryTosca))
               : ListView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.all(16),
@@ -179,8 +181,8 @@ class _ChatAreaState extends State<ChatArea> {
                     return Align(
                       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
-                        margin: EdgeInsets.symmetric(vertical: 4),
-                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                         decoration: BoxDecoration(
                           color: isUser
                               ? AppColors.primaryTosca.withOpacity(0.8)
@@ -189,7 +191,7 @@ class _ChatAreaState extends State<ChatArea> {
                         ),
                         child: Text(
                           msg['content'] ?? '',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Tommy',
                             fontWeight: FontWeight.w400,
                             color: AppColors.brownFont,
@@ -200,7 +202,7 @@ class _ChatAreaState extends State<ChatArea> {
                   },
                 ),
         ),
-        Divider(height: 1),
+        const Divider(height: 1),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -209,7 +211,7 @@ class _ChatAreaState extends State<ChatArea> {
                 child: TextField(
                   controller: _controller,
                   enabled: !_isLoading,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Tommy',
                     fontWeight: FontWeight.w400,
                     color: AppColors.brownFont,
@@ -227,9 +229,9 @@ class _ChatAreaState extends State<ChatArea> {
                   onSubmitted: (value) => sendMessage(value),
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               IconButton(
-                icon: Icon(Icons.send, color: AppColors.brownFont),
+                icon: const Icon(Icons.send, color: AppColors.brownFont),
                 onPressed: _isLoading
                     ? null
                     : () => sendMessage(_controller.text),

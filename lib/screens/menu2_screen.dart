@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 class Menu2Screen extends StatelessWidget {
-  final List<Map<String, String>> walls = [
+  const Menu2Screen({super.key});
+
+  final List<Map<String, String>> walls = const [
     {
       'image': 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
       'title': 'Kindness Wall 1',
@@ -36,7 +38,7 @@ class Menu2Screen extends StatelessWidget {
         backgroundColor: AppColors.primaryBlue,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: Text(
+        title: const Text(
           'Kindness Walls',
           style: TextStyle(
             fontFamily: 'Tommy',
@@ -51,7 +53,7 @@ class Menu2Screen extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: GridView.builder(
           itemCount: walls.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
@@ -61,13 +63,17 @@ class Menu2Screen extends StatelessWidget {
             final wall = walls[index];
             return Card(
               elevation: 3,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(12)
+                      ),
                       child: Image.network(
                         wall['image']!,
                         fit: BoxFit.cover,
@@ -78,7 +84,7 @@ class Menu2Screen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       wall['title']!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: 'Tommy',
                         fontWeight: FontWeight.w600,
                         color: AppColors.secondaryBlue,

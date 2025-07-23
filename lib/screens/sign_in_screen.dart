@@ -5,8 +5,10 @@ import '../services/google_sign_in_service.dart';
 import '../constants/app_colors.dart';
 
 class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
+
   @override
-  _SignInScreenState createState() => _SignInScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> {
@@ -21,7 +23,7 @@ class _SignInScreenState extends State<SignInScreen> {
     try {
       final UserCredential? result = await _signInService.signInWithGoogle();
 
-      if (result != null) {
+      if (result != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Welcome ${result.user?.displayName ?? 'User'}!'),
@@ -29,26 +31,32 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         );
 
-        Navigator.pushReplacementNamed(context, '/mainmenu');
-      } else {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/mainmenu');
+        }
+      } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Sign in was cancelled'),
             backgroundColor: Colors.orange,
           ),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -57,7 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Google Sign In',
           style: TextStyle(
             fontFamily: 'Tommy',
@@ -79,8 +87,8 @@ class _SignInScreenState extends State<SignInScreen> {
               size: 100,
               color: AppColors.secondaryPink.withOpacity(0.5),
             ),
-            SizedBox(height: 32),
-            Text(
+            const SizedBox(height: 32),
+            const Text(
               'Welcome!',
               style: TextStyle(
                 fontFamily: 'Tommy',
@@ -89,7 +97,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 color: AppColors.secondaryPink,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'Please sign in to continue',
               style: TextStyle(
@@ -98,15 +106,18 @@ class _SignInScreenState extends State<SignInScreen> {
                 color: AppColors.secondaryPink.withOpacity(0.7),
               ),
             ),
-            SizedBox(height: 48),
+            const SizedBox(height: 48),
             _isLoading
-                ? CircularProgressIndicator(
+                ? const CircularProgressIndicator(
                     color: AppColors.secondaryPink,
                   )
                 : ElevatedButton.icon(
                     onPressed: _signInWithGoogle,
-                    icon: FaIcon(FontAwesomeIcons.google, color: AppColors.secondaryPink),
-                    label: Text(
+                    icon: const FaIcon(
+                      FontAwesomeIcons.google, 
+                      color: AppColors.secondaryPink
+                    ),
+                    label: const Text(
                       'Sign in with Google',
                       style: TextStyle(
                         fontFamily: 'Tommy',
@@ -118,7 +129,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPink,
                       foregroundColor: AppColors.secondaryPink,
-                      minimumSize: Size(double.infinity, 50),
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

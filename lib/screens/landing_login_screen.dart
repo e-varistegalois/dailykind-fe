@@ -1,14 +1,15 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 class LandingLoginScreen extends StatelessWidget {
+  const LandingLoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+      title: const Text(
         'Login Required',
         style: TextStyle(
           fontFamily: 'Tommy',
@@ -18,7 +19,7 @@ class LandingLoginScreen extends StatelessWidget {
         ),
         textAlign: TextAlign.center,
       ),
-      content: Text(
+      content: const Text(
         'Please login to access this feature.',
         style: TextStyle(
           fontFamily: 'Tommy',
@@ -34,7 +35,7 @@ class LandingLoginScreen extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: Text(
+          child: const Text(
             'Cancel',
             style: TextStyle(
               fontFamily: 'Tommy',
@@ -51,13 +52,13 @@ class LandingLoginScreen extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.secondaryPink,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
-            minimumSize: Size(90, 40),
+            minimumSize: const Size(90, 40),
             elevation: 0,
           ),
-          child: Text(
+          child: const Text(
             'Login',
             style: TextStyle(
               fontFamily: 'Tommy',

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 class Menu3Screen extends StatelessWidget {
-  final List<String> flowers = [
+  const Menu3Screen({super.key});
+
+  final List<String> flowers = const [
     'https://cdn.pixabay.com/photo/2016/03/27/21/16/flower-1283608_1280.jpg',
     'https://cdn.pixabay.com/photo/2017/01/20/00/30/rose-1997287_1280.jpg',
     'https://cdn.pixabay.com/photo/2015/04/19/08/32/rose-729509_1280.jpg',
@@ -17,7 +19,7 @@ class Menu3Screen extends StatelessWidget {
         backgroundColor: AppColors.primaryYellow,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: Text(
+        title: const Text(
           'Bloom Board',
           style: TextStyle(
             fontFamily: 'Tommy',
@@ -32,7 +34,7 @@ class Menu3Screen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
           itemCount: flowers.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 16,
             crossAxisSpacing: 16,
@@ -49,10 +51,10 @@ class Menu3Screen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Flower ${index + 1}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Tommy',
                     fontWeight: FontWeight.w600,
                     color: AppColors.secondaryYellow,

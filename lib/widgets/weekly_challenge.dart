@@ -45,7 +45,7 @@ class WeeklyChallenge extends StatelessWidget {
                         color: AppColors.primaryPink,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.emoji_events,
                         color: Colors.white,
                         size: 20,
@@ -56,7 +56,7 @@ class WeeklyChallenge extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Weekly Challenge',
                             style: TextStyle(
                               fontFamily: 'Tommy',
@@ -75,7 +75,7 @@ class WeeklyChallenge extends StatelessWidget {
                                 color: Colors.green,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'ACTIVE',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -113,7 +113,7 @@ class WeeklyChallenge extends StatelessWidget {
                     onPressed: () {
                       // TODO: Navigate to challenge detail or action
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text('Challenge accepted! Good luck! 🌟'),
                           backgroundColor: AppColors.primaryPink,
                         ),
@@ -127,7 +127,7 @@ class WeeklyChallenge extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Accept Challenge',
                       style: TextStyle(
                         fontFamily: 'Tommy',

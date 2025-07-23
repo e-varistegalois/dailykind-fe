@@ -5,7 +5,7 @@ const Color _darkGreen = Color(0xFF406A5A);
 const Color _buttonGreen = Color(0xFF588D7A);
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+  const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -81,31 +81,6 @@ class WelcomeScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _FeatureItem extends StatelessWidget {
-  final String text;
-  const _FeatureItem({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const SizedBox(width: 8),
-        Flexible(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: 'Tommy',
-              fontSize: 15.5,
-              fontWeight: FontWeight.w500,
-              color: _darkGreen,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

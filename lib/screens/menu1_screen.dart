@@ -6,6 +6,8 @@ import '../services/challenge_service.dart';
 import '../widgets/weekly_challenge.dart';
 
 class Menu1Screen extends StatefulWidget {
+  const Menu1Screen({super.key});
+
   @override
   State<Menu1Screen> createState() => _Menu1ScreenState();
 }
@@ -79,7 +81,7 @@ class _Menu1ScreenState extends State<Menu1Screen> {
         backgroundColor: AppColors.primaryPink,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: Text(
+        title: const Text(
           'Explore',
           style: TextStyle(
             fontFamily: 'Tommy',
@@ -91,7 +93,7 @@ class _Menu1ScreenState extends State<Menu1Screen> {
         centerTitle: true,
       ),
       body: ListView.builder(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         itemCount: currentUser != null ? items.length + 1 : items.length, // +1 for challenge if logged in
         itemBuilder: (context, index) {
           // First item is challenge (if user is logged in)
@@ -100,8 +102,8 @@ class _Menu1ScreenState extends State<Menu1Screen> {
               width: double.infinity,
               margin: const EdgeInsets.only(bottom: 16),
               child: isLoadingChallenge
-                  ? Card(
-                      child: Container(
+                  ? const Card(
+                      child: SizedBox(
                         height: 100,
                         child: Center(
                           child: CircularProgressIndicator(
@@ -116,20 +118,20 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.error_outline,
                                   color: Colors.red,
                                   size: 30,
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
+                                const Text(
                                   'Failed to load challenge',
                                   style: TextStyle(color: Colors.red),
                                 ),
                                 const SizedBox(height: 8),
                                 ElevatedButton(
                                   onPressed: fetchWeeklyChallenge,
-                                  child: Text('Retry'),
+                                  child: const Text('Retry'),
                                 ),
                               ],
                             ),
@@ -146,7 +148,7 @@ class _Menu1ScreenState extends State<Menu1Screen> {
           final item = items[itemIndex];
           
           return Card(
-            margin: EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: 16),
             elevation: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,14 +166,14 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                     children: [
                       Text(
                         item['title']!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: 'Tommy',
                           fontWeight: FontWeight.w600,
                           color: AppColors.secondaryPink,
                           fontSize: 20,
                         ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         item['subtitle']!,
                         style: TextStyle(

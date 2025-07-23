@@ -9,7 +9,8 @@ class ChatSidebar extends StatelessWidget {
   final Function(String) onSessionSelected;
   final Function(String) onDeleteSession;
 
-  ChatSidebar({
+  const ChatSidebar({
+    super.key,
     required this.sessions,
     required this.selectedSessionId,
     required this.onSessionSelected,
@@ -27,7 +28,7 @@ class ChatSidebar extends StatelessWidget {
       case 'cheerful':
         return Colors.green[700]!;
       case 'humorous':
-        return Color(0xFFFF9800); // oren
+        return const Color(0xFFFF9800); // oren
       default:
         return AppColors.brownFont;
     }
@@ -38,12 +39,12 @@ class ChatSidebar extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton.icon(
-              icon: Icon(Icons.add_comment, color: AppColors.secondaryTosca),
-              label: Text(
+              icon: const Icon(Icons.add_comment, color: AppColors.secondaryTosca),
+              label: const Text(
                 'New Chat',
                 style: TextStyle(
                   fontFamily: 'Tommy',
@@ -53,7 +54,7 @@ class ChatSidebar extends StatelessWidget {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryTosca,
-                minimumSize: Size(double.infinity, 40),
+                minimumSize: const Size(double.infinity, 40),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -65,7 +66,7 @@ class ChatSidebar extends StatelessWidget {
               },
             ),
           ),
-          Divider(height: 32),
+          const Divider(height: 32),
           Expanded(
             child: ListView.builder(
               itemCount: sessions.length,
@@ -89,7 +90,7 @@ class ChatSidebar extends StatelessWidget {
                     session.displayChat,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'Tommy',
                       fontWeight: FontWeight.w400,
                       color: AppColors.brownFont,
@@ -97,14 +98,14 @@ class ChatSidebar extends StatelessWidget {
                   ),
                   onTap: () => onSessionSelected(session.sessionId),
                   trailing: PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, color: AppColors.secondaryTosca),
+                    icon: const Icon(Icons.more_vert, color: AppColors.secondaryTosca),
                     onSelected: (value) {
                       if (value == 'delete') {
                         onDeleteSession(session.sessionId);
                       }
                     },
                     itemBuilder: (context) => [
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         value: 'delete',
                         child: Text('Delete', style: TextStyle(color: AppColors.brownFont)),
                       ),

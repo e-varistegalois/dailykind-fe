@@ -9,6 +9,8 @@ import 'menu4_screen.dart';
 import 'landing_login_screen.dart';
 
 class MainMenuScreen extends StatefulWidget {
+  const MainMenuScreen({super.key});
+
   @override
   State<MainMenuScreen> createState() => _MainMenuScreenState();
 }
@@ -17,14 +19,14 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    Menu1Screen(),
-    Menu2Screen(),
-    ChatbotScreen(),
-    Menu3Screen(),
-    Menu4Screen(),
+    const Menu1Screen(),
+    const Menu2Screen(),
+    const ChatbotScreen(),
+    const Menu3Screen(),
+    const Menu4Screen(),
   ];
 
-  final List<IconData> _filledIcons = [
+  final List<IconData> _filledIcons = const [
     Icons.emoji_nature_rounded,
     Icons.dashboard_rounded,
     Icons.chat_bubble_rounded,
@@ -32,7 +34,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     Icons.person_rounded,
   ];
 
-  final List<IconData> _regularIcons = [
+  final List<IconData> _regularIcons = const [
     Icons.emoji_nature_outlined,
     Icons.dashboard_outlined,
     Icons.chat_bubble_outline,
@@ -40,7 +42,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     Icons.person_outline,
   ];
 
-  final List<Color> _secondaryColors = [
+  final List<Color> _secondaryColors = const [
     AppColors.secondaryPink,
     AppColors.secondaryBlue,
     AppColors.secondaryTosca,
@@ -54,7 +56,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     if (index >= 2 && user == null) {
       showDialog(
         context: context,
-        builder: (context) => LandingLoginScreen(),
+        builder: (context) => const LandingLoginScreen(),
       );
       return; // Jangan ubah halaman
     }
@@ -92,10 +94,10 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         }),
         backgroundColor: Colors.white,
         elevation: 8,
-        selectedLabelStyle: TextStyle(
+        selectedLabelStyle: const TextStyle(
           fontFamily: 'Tommy',
           fontWeight: FontWeight.w600,
-          color: _secondaryColors[_selectedIndex],
+          color: AppColors.secondaryPink,
         ),
       ),
     );

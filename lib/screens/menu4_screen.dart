@@ -4,8 +4,10 @@ import '../services/google_sign_in_service.dart';
 import '../constants/app_colors.dart';
 
 class Menu4Screen extends StatefulWidget {
+  const Menu4Screen({super.key});
+
   @override
-  _Menu4ScreenState createState() => _Menu4ScreenState();
+  State<Menu4Screen> createState() => _Menu4ScreenState();
 }
 
 class _Menu4ScreenState extends State<Menu4Screen> {
@@ -21,14 +23,18 @@ class _Menu4ScreenState extends State<Menu4Screen> {
   Future<void> _signOut() async {
     try {
       await _signInService.signOut();
-      Navigator.pushReplacementNamed(context, '/mainmenu');
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/mainmenu');
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error signing out: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error signing out: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -40,7 +46,7 @@ class _Menu4ScreenState extends State<Menu4Screen> {
         backgroundColor: AppColors.primaryGreen,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: Text(
+        title: const Text(
           'Profile',
           style: TextStyle(
             fontFamily: 'Tommy',
@@ -56,7 +62,7 @@ class _Menu4ScreenState extends State<Menu4Screen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             CircleAvatar(
               radius: 50,
               backgroundImage: _user?.photoURL != null
@@ -64,22 +70,22 @@ class _Menu4ScreenState extends State<Menu4Screen> {
                   : null,
               backgroundColor: AppColors.primaryGreen.withOpacity(0.3),
               child: _user?.photoURL == null
-                  ? Icon(Icons.person, size: 50, color: AppColors.secondaryGreen)
+                  ? const Icon(Icons.person, size: 50, color: AppColors.secondaryGreen)
                   : null,
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Card(
               color: AppColors.primaryGreen.withOpacity(0.2),
               elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: AppColors.primaryGreen, width: 1),
+                side: const BorderSide(color: AppColors.primaryGreen, width: 1),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Center(
+                    const Center(
                       child: Text(
                         'User Information',
                         style: TextStyle(
@@ -90,37 +96,37 @@ class _Menu4ScreenState extends State<Menu4Screen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     _buildInfoField('Name', _user?.displayName ?? 'N/A'),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildInfoField('Email', _user?.email ?? 'N/A'),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     _buildInfoField('User ID', _user?.uid ?? 'N/A'),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             SizedBox(
               width: 120,
               child: ElevatedButton(
                 onPressed: _signOut,
-                child: Text(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(100, 44),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
                   'Sign Out',
                   style: TextStyle(
                     fontFamily: 'Tommy',
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  minimumSize: Size(100, 44),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
                 ),
               ),
             ),
@@ -136,7 +142,7 @@ class _Menu4ScreenState extends State<Menu4Screen> {
       readOnly: true,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
+        labelStyle: const TextStyle(
           fontFamily: 'Tommy',
           fontWeight: FontWeight.w500,
           color: AppColors.secondaryGreen,
@@ -145,14 +151,14 @@ class _Menu4ScreenState extends State<Menu4Screen> {
         fillColor: Colors.white,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: AppColors.primaryGreen, width: 1),
+          borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: AppColors.secondaryGreen, width: 2),
+          borderSide: const BorderSide(color: AppColors.secondaryGreen, width: 2),
         ),
       ),
-      style: TextStyle(
+      style: const TextStyle(
         fontFamily: 'Tommy',
         fontWeight: FontWeight.w400,
         color: AppColors.secondaryGreen,

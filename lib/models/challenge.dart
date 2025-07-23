@@ -24,7 +24,7 @@ class Challenge {
   String get cleanContent {
     return content
         .replaceAll('**', '') // Remove bold markdown
-        .replaceAll('\"', '"') // Clean quotes
+        .replaceAll('"', '"')  // Clean quotes
         .trim();
   }
 }

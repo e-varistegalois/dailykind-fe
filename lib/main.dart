@@ -12,13 +12,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 // Tambahkan warna brownFont
 const Color brownFont = Color(0xFF584839);
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,44 +34,44 @@ class MyApp extends StatelessWidget {
           bodyColor: brownFont,
           displayColor: brownFont,
         ).copyWith(
-          bodyLarge: TextStyle(
+          bodyLarge: const TextStyle(
             fontFamily: 'Tommy',
             fontWeight: FontWeight.w600,
             color: brownFont,
           ),
-          bodyMedium: TextStyle(
+          bodyMedium: const TextStyle(
             fontFamily: 'Tommy',
             fontWeight: FontWeight.w600,
             color: brownFont,
           ),
-          bodySmall: TextStyle(
+          bodySmall: const TextStyle(
             fontFamily: 'Tommy',
             fontWeight: FontWeight.w600,
             color: brownFont,
           ),
-          titleLarge: TextStyle(
+          titleLarge: const TextStyle(
             fontFamily: 'Tommy',
             fontWeight: FontWeight.w600,
             color: brownFont,
           ),
-          titleMedium: TextStyle(
+          titleMedium: const TextStyle(
             fontFamily: 'Tommy',
             fontWeight: FontWeight.w600,
             color: brownFont,
           ),
-          titleSmall: TextStyle(
+          titleSmall: const TextStyle(
             fontFamily: 'Tommy',
             fontWeight: FontWeight.w600,
             color: brownFont,
           ),
         ),
       ),
-      home: WelcomeScreen(),
+      home: const WelcomeScreen(),
       routes: {
-        '/signin': (context) => SignInScreen(),
-        '/mainmenu': (context) => MainMenuScreen(),
-        '/chatbot': (context) => ChatbotScreen(),
-        '/notice': (context) => NoticeScreen(),
+        '/signin': (context) => const SignInScreen(),
+        '/mainmenu': (context) => const MainMenuScreen(),
+        '/chatbot': (context) => const ChatbotScreen(),
+        '/notice': (context) => const NoticeScreen(),
       },
     );
   }

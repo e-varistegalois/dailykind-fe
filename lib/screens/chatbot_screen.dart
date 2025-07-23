@@ -9,6 +9,8 @@ import '../constants/app_colors.dart';
 import 'package:http/http.dart' as http;
 
 class ChatbotScreen extends StatefulWidget {
+  const ChatbotScreen({super.key});
+
   @override
   State<ChatbotScreen> createState() => _ChatbotScreenState();
 }
@@ -92,7 +94,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       return;
     }
 
-    final apiUrl = '$apiBaseUrl/chatbot/';
+    const apiUrl = '$apiBaseUrl/chatbot/';
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
@@ -173,12 +175,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         automaticallyImplyLeading: false,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(Icons.history, color: AppColors.secondaryTosca),
+            icon: const Icon(Icons.history, color: AppColors.secondaryTosca),
             onPressed: () => Scaffold.of(context).openDrawer(),
             tooltip: 'History',
           ),
         ),
-        title: Text(
+        title: const Text(
           'Chatbot',
           style: TextStyle(
             fontFamily: 'Tommy',
@@ -189,7 +191,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add_comment, color: AppColors.secondaryTosca),
+            icon: const Icon(Icons.add_comment, color: AppColors.secondaryTosca),
             tooltip: 'New Chat',
             onPressed: () {
               setState(() {
@@ -199,27 +201,27 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
           if (errorMessage != null)
             IconButton(
-              icon: Icon(Icons.refresh, color: AppColors.secondaryTosca),
+              icon: const Icon(Icons.refresh, color: AppColors.secondaryTosca),
               onPressed: loadSessions,
             ),
         ],
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator(color: AppColors.secondaryTosca))
+          ? const Center(child: CircularProgressIndicator(color: AppColors.secondaryTosca))
           : errorMessage != null
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Error: $errorMessage', style: TextStyle(color: AppColors.brownFont)),
+                      Text('Error: $errorMessage', style: const TextStyle(color: AppColors.brownFont)),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryTosca,
                           foregroundColor: AppColors.brownFont,
                         ),
                         onPressed: loadSessions,
-                        child: Text('Retry'),
+                        child: const Text('Retry'),
                       ),
                     ],
                   ),
@@ -244,7 +246,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             children: [
               Text(
                 'Hello, $userName.',
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Tommy',
                   fontWeight: FontWeight.w700,
                   fontSize: 22,
@@ -252,8 +254,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 8),
-              Text(
+              const SizedBox(height: 8),
+              const Text(
                 "How are you doing today? I'm ready to hear what's on your mind.",
                 style: TextStyle(
                   fontFamily: 'Tommy',
@@ -263,12 +265,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               GridView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: personalities.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 20,
@@ -283,7 +285,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       color: AppColors.primaryTosca.withOpacity(0.4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(color: AppColors.secondaryTosca, width: 1.2),
+                        side: const BorderSide(color: AppColors.secondaryTosca, width: 1.2),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -294,31 +296,31 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                             Container(
                               width: 48,
                               height: 48,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppColors.secondaryTosca, width: 1),
+                                borderRadius: BorderRadius.all(Radius.circular(12)),
+                                border: Border.fromBorderSide(BorderSide(color: AppColors.secondaryTosca, width: 1)),
                               ),
-                              child: Icon(Icons.image, size: 32, color: AppColors.secondaryTosca),
+                              child: const Icon(Icons.image, size: 32, color: AppColors.secondaryTosca),
                             ),
-                            SizedBox(height: 14),
+                            const SizedBox(height: 14),
                             Text(
                               p['label'],
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontFamily: 'Tommy',
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                                 color: AppColors.brownFont,
                               ),
                             ),
-                            SizedBox(height: 6),
+                            const SizedBox(height: 6),
                             Text(
                               p['desc'],
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontFamily: 'Tommy',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 13,
-                                color: AppColors.brownFont.withOpacity(0.7),
+                                color: Color(0xB3A67C52), // AppColors.brownFont.withOpacity(0.7)
                               ),
                               textAlign: TextAlign.center,
                             ),

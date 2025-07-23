@@ -32,10 +32,10 @@ class NoticeScreen extends StatelessWidget {
                 color: Colors.white,
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 18),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 28, horizontal: 18),
                   child: Column(
-                    children: const [
+                    children: [
                       Icon(Icons.warning_amber_rounded, color: _darkOrange, size: 38),
                       SizedBox(height: 16),
                       Text(
@@ -94,4 +94,4 @@ class NoticeScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

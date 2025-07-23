@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../models/challenge.dart';
 import '../constants/globals.dart';
@@ -18,7 +19,7 @@ class ChallengeService {
       }
       return null;
     } catch (e) {
-      print('Error fetching challenge: $e');
+      debugPrint('Error fetching challenge: $e');
       throw Exception('Failed to load weekly challenge');
     }
   }
