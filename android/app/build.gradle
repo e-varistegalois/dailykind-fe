@@ -40,6 +40,12 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+     // Optimize build for CI
+    dexOptions {
+        javaMaxHeapSize "4g"
+        preDexLibraries false
+    }
 }
 
 flutter {
