@@ -86,7 +86,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             label: [
               'Feeds',
               'Kindness Walls',
-              'Chatbot',
+              'Lil Guy',
               'Bloom Board',
               'Profile'
             ][index],

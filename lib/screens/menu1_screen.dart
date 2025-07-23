@@ -42,15 +42,8 @@ class _Menu1ScreenState extends State<Menu1Screen> {
     // Check user authentication status
     currentUser = FirebaseAuth.instance.currentUser;
     
-    // Only fetch challenge if user is logged in
-    if (currentUser != null) {
-      fetchWeeklyChallenge();
-    } else {
-      // User not logged in, set loading to false
-      setState(() {
-        isLoadingChallenge = false;
-      });
-    }
+    // Fetch challenge regardless of login status
+    fetchWeeklyChallenge();
   }
 
   Future<void> fetchWeeklyChallenge() async {
@@ -77,28 +70,29 @@ class _Menu1ScreenState extends State<Menu1Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryPink,
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'Explore',
+          'Buzz Feeds',
           style: TextStyle(
-            fontFamily: 'Tommy',
-            fontWeight: FontWeight.w600,
-            color: AppColors.secondaryPink,
-            fontSize: 22,
+            fontFamily: 'CuteLove',
+            fontWeight: FontWeight.w700,
+            color: AppColors.pinkFont,
+            fontSize: 26,
           ),
         ),
         centerTitle: true,
       ),
-      body: ListView.builder(
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        itemCount: currentUser != null ? items.length + 1 : items.length, // +1 for challenge if logged in
-        itemBuilder: (context, index) {
-          // First item is challenge (if user is logged in)
-          if (currentUser != null && index == 0) {
-            return Container(
+        child: Column(
+          children: [
+            // Weekly Challenge
+            Container(
               width: double.infinity,
               margin: const EdgeInsets.only(bottom: 16),
               child: isLoadingChallenge
@@ -140,56 +134,23 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                       : challenge != null
                           ? WeeklyChallenge(challenge: challenge!)
                           : const SizedBox.shrink(),
-            );
-          }
-          
-          // Adjust index for explore items
-          final itemIndex = currentUser != null ? index - 1 : index;
-          final item = items[itemIndex];
-          
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            elevation: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.network(
-                  item['image']!,
-                  width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.cover,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['title']!,
-                        style: const TextStyle(
-                          fontFamily: 'Tommy',
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.secondaryPink,
-                          fontSize: 20,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        item['subtitle']!,
-                        style: TextStyle(
-                          fontFamily: 'Tommy',
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.secondaryPink.withOpacity(0.7),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
+            ),
+            // Coming Soon placeholder
+            const Expanded(
+              child: Center(
+                child: Text(
+                  'More content coming soon!',
+                  style: TextStyle(
+                    fontFamily: 'Tommy',
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.brownFont,
+                    fontSize: 18,
                   ),
                 ),
-              ],
+              ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }

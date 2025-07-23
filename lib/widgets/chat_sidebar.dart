@@ -37,6 +37,7 @@ class ChatSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: Colors.grey[50],
       child: Column(
         children: [
           const SizedBox(height: 32),
@@ -53,7 +54,7 @@ class ChatSidebar extends StatelessWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryTosca,
+                backgroundColor: Theme.of(context).drawerTheme.backgroundColor ?? Colors.grey[50],
                 minimumSize: const Size(double.infinity, 40),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

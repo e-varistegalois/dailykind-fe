@@ -66,77 +66,158 @@ class _SignInScreenState extends State<SignInScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          'Google Sign In',
+          'Sign In',
           style: TextStyle(
-            fontFamily: 'Tommy',
-            fontWeight: FontWeight.w600,
-            color: AppColors.secondaryPink,
+            fontFamily: 'CuteLove',
+            fontWeight: FontWeight.w700,
+            color: AppColors.pinkFont,
+            fontSize: 26,
           ),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.primaryPink,
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        iconTheme: const IconThemeData(
+          color: AppColors.pinkFont,
+          size: 24,
+        ),
+        leading: Navigator.canPop(context) 
+            ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: AppColors.pinkFont,
+                  weight: 700,
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.account_circle,
-              size: 100,
-              color: AppColors.secondaryPink.withOpacity(0.5),
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'Welcome!',
-              style: TextStyle(
-                fontFamily: 'Tommy',
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: AppColors.secondaryPink,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 60),
+              // Icon dengan background soft
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryPink.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(60),
+                ),
+                child: Icon(
+                  Icons.waving_hand,
+                  size: 60,
+                  color: AppColors.pinkFont,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Please sign in to continue',
-              style: TextStyle(
-                fontFamily: 'Tommy',
-                fontSize: 16,
-                color: AppColors.secondaryPink.withOpacity(0.7),
-              ),
-            ),
-            const SizedBox(height: 48),
-            _isLoading
-                ? const CircularProgressIndicator(
-                    color: AppColors.secondaryPink,
-                  )
-                : ElevatedButton.icon(
-                    onPressed: _signInWithGoogle,
-                    icon: const FaIcon(
-                      FontAwesomeIcons.google, 
-                      color: AppColors.secondaryPink
-                    ),
-                    label: const Text(
-                      'Sign in with Google',
-                      style: TextStyle(
-                        fontFamily: 'Tommy',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.secondaryPink,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPink,
-                      foregroundColor: AppColors.secondaryPink,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
+              const SizedBox(height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Welcome to ',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.pinkFont,
                     ),
                   ),
-          ],
+                  const Text(
+                    'DailyKind',
+                    style: TextStyle(
+                      fontFamily: 'CuteLove',
+                      fontSize: 34,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.pinkFont,
+                    ),
+                  ),
+                  const Text(
+                    '!',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.pinkFont,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Your personal companion for daily wellness and meaningful conversations',
+                style: TextStyle(
+                  fontFamily: 'Tommy',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.brownFont,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 60),
+              _isLoading
+                  ? Container(
+                      padding: const EdgeInsets.all(16),
+                      child: const CircularProgressIndicator(
+                        color: AppColors.pinkFont,
+                      ),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryPink.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton.icon(
+                        onPressed: _signInWithGoogle,
+                        icon: const FaIcon(
+                          FontAwesomeIcons.google, 
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        label: const Text(
+                          'Continue with Google',
+                          style: TextStyle(
+                            fontFamily: 'Tommy',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.pinkFont,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(double.infinity, 56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                      ),
+                    ),
+              const SizedBox(height: 24),
+              Text(
+                'By signing in, you agree to our Terms of Service and Privacy Policy',
+                style: TextStyle(
+                  fontFamily: 'Tommy',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.brownFont.withOpacity(0.6),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );

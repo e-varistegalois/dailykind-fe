@@ -90,6 +90,10 @@ flutter:
       fonts:
         - asset: assets/fonts/Tommy.otf
           weight: 600
+    - family: CuteLove
+      fonts:
+        - asset: assets/fonts/Cute_Love.ttf
+          weight: 600
 
-  assets:
-    - assets/images/
+assets:
+  - assets/images/

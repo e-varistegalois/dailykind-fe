@@ -15,54 +15,32 @@ class Menu3Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryYellow,
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
           'Bloom Board',
           style: TextStyle(
-            fontFamily: 'Tommy',
-            fontWeight: FontWeight.w600,
-            color: AppColors.secondaryYellow,
-            fontSize: 22,
+            fontFamily: 'CuteLove',
+            fontWeight: FontWeight.w700,
+            color: AppColors.yellowFont,
+            fontSize: 26,
           ),
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.builder(
-          itemCount: flowers.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
+      body: const Center(
+        child: Text(
+          'Coming Soon',
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: AppColors.brownFont,
+            fontSize: 18,
           ),
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      flowers[index],
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Flower ${index + 1}',
-                  style: const TextStyle(
-                    fontFamily: 'Tommy',
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.secondaryYellow,
-                  ),
-                ),
-              ],
-            );
-          },
         ),
       ),
     );

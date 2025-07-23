@@ -34,69 +34,32 @@ class Menu2Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryBlue,
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
           'Kindness Walls',
           style: TextStyle(
-            fontFamily: 'Tommy',
-            fontWeight: FontWeight.w600,
-            color: AppColors.secondaryBlue,
-            fontSize: 22,
+            fontFamily: 'CuteLove',
+            fontWeight: FontWeight.w700,
+            color: AppColors.blueFont,
+            fontSize: 26,
           ),
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: GridView.builder(
-          itemCount: walls.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 0.85,
+      body: const Center(
+        child: Text(
+          'Coming Soon',
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: AppColors.brownFont,
+            fontSize: 18,
           ),
-          itemBuilder: (context, index) {
-            final wall = walls[index];
-            return Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(12)
-                      ),
-                      child: Image.network(
-                        wall['image']!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      wall['title']!,
-                      style: const TextStyle(
-                        fontFamily: 'Tommy',
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.secondaryBlue,
-                        fontSize: 16,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
         ),
       ),
     );

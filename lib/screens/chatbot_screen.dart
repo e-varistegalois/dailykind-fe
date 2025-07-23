@@ -24,23 +24,23 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   final List<Map<String, dynamic>> personalities = [
     {
       'label': 'Calm',
-      'desc': 'Comforting presence',
-      'image': null,
+      'desc': 'Ready to listen with patience',
+      'image': 'images/calm.png',
     },
     {
       'label': 'Emo',
-      'desc': 'Logical & honest',
-      'image': null,
+      'desc': 'Wants to hear your real thoughts',
+      'image': 'images/emo.png',
     },
     {
       'label': 'Humorous',
-      'desc': 'Makes you laugh',
-      'image': null,
+      'desc': 'Excited for your funny stories',
+      'image': 'images/humorous.png',
     },
     {
       'label': 'Cheerful',
-      'desc': 'Always encouraging',
-      'image': null,
+      'desc': 'Eager to celebrate with you',
+      'image': 'images/cheerful.png',
     },
   ];
 
@@ -153,25 +153,29 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: ChatSidebar(
-        sessions: sessions,
-        selectedSessionId: selectedSessionId,
-        onSessionSelected: (id) {
-          setState(() {
-            selectedSessionId = id;
-            Navigator.pop(context);
-          });
-        },
-        onNewChatCreated: (sessionId) {
-          setState(() {
-            selectedSessionId = null;
-          });
-        },
-        onDeleteSession: _handleDeleteSession,
+      drawer: Container(
+        color: Colors.grey[50],
+        child: ChatSidebar(
+          sessions: sessions,
+          selectedSessionId: selectedSessionId,
+          onSessionSelected: (id) {
+            setState(() {
+              selectedSessionId = id;
+              Navigator.pop(context);
+            });
+          },
+          onNewChatCreated: (sessionId) {
+            setState(() {
+              selectedSessionId = null;
+            });
+          },
+          onDeleteSession: _handleDeleteSession,
+        ),
       ),
       appBar: AppBar(
-        backgroundColor: AppColors.primaryTosca,
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         leading: Builder(
           builder: (context) => IconButton(
@@ -181,12 +185,12 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
           ),
         ),
         title: const Text(
-          'Chatbot',
+          'Lil Guy',
           style: TextStyle(
-            fontFamily: 'Tommy',
+            fontFamily: 'CuteLove',
             fontWeight: FontWeight.w700,
             color: AppColors.secondaryTosca,
-            fontSize: 22,
+            fontSize: 26,
           ),
         ),
         actions: [
@@ -256,7 +260,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
               ),
               const SizedBox(height: 8),
               const Text(
-                "How are you doing today? I'm ready to hear what's on your mind.",
+                "Which Lil Guy would you like to share your story with today? We're all here and excited to listen!",
                 style: TextStyle(
                   fontFamily: 'Tommy',
                   fontWeight: FontWeight.w400,
@@ -278,53 +282,70 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final p = personalities[index];
-                  return GestureDetector(
-                    onTap: isLoading ? null : () => _handleNewChat(p['label']),
-                    child: Card(
-                      elevation: 3,
-                      color: AppColors.primaryTosca.withOpacity(0.4),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: const BorderSide(color: AppColors.secondaryTosca, width: 1.2),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Placeholder image, ganti dengan Image.asset(p['image']) jika sudah ada PNG
-                            Container(
-                              width: 48,
-                              height: 48,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(Radius.circular(12)),
-                                border: Border.fromBorderSide(BorderSide(color: AppColors.secondaryTosca, width: 1)),
-                              ),
-                              child: const Icon(Icons.image, size: 32, color: AppColors.secondaryTosca),
+                  return MouseRegion(
+                    cursor: isLoading ? SystemMouseCursors.forbidden : SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: isLoading ? null : () => _handleNewChat(p['label']),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        child: Card(
+                          elevation: 0,
+                          color: AppColors.primaryTosca.withOpacity(0.4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Gambar personality tanpa kotak
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    p['image'],
+                                    width: 64,
+                                    height: 64,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      // Fallback ke icon jika gambar tidak ditemukan
+                                      return Container(
+                                        width: 64,
+                                        height: 64,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                                          border: Border.fromBorderSide(BorderSide(color: AppColors.secondaryTosca, width: 1)),
+                                        ),
+                                        child: const Icon(Icons.image, size: 32, color: AppColors.secondaryTosca),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+                                Text(
+                                  p['label'],
+                                  style: const TextStyle(
+                                    fontFamily: 'Tommy',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                    color: AppColors.brownFont,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  p['desc'],
+                                  style: const TextStyle(
+                                    fontFamily: 'Tommy',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                    color: Color(0xB3A67C52), // AppColors.brownFont.withOpacity(0.7)
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 14),
-                            Text(
-                              p['label'],
-                              style: const TextStyle(
-                                fontFamily: 'Tommy',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                                color: AppColors.brownFont,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              p['desc'],
-                              style: const TextStyle(
-                                fontFamily: 'Tommy',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13,
-                                color: Color(0xB3A67C52), // AppColors.brownFont.withOpacity(0.7)
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),

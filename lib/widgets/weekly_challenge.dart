@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/challenge.dart';
 import '../constants/app_colors.dart';
 
@@ -111,13 +112,88 @@ class WeeklyChallenge extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Navigate to challenge detail or action
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Challenge accepted! Good luck! 🌟'),
-                          backgroundColor: AppColors.primaryPink,
-                        ),
-                      );
+                      // Check if user is logged in
+                      final currentUser = FirebaseAuth.instance.currentUser;
+                      
+                      if (currentUser == null) {
+                        // User not logged in, show dialog to sign in
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                              ),
+                              title: const Text(
+                                'Login Required',
+                                style: TextStyle(
+                                  fontFamily: 'Tommy',
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.secondaryPink,
+                                  fontSize: 20,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              content: const Text(
+                                'Please login to accept challenges.',
+                                style: TextStyle(
+                                  fontFamily: 'Tommy',
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.secondaryPink,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              actionsAlignment: MainAxisAlignment.center,
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      fontFamily: 'Tommy',
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.secondaryPink,
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.pushNamed(context, '/signin');
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.secondaryPink,
+                                    foregroundColor: Colors.white,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                    minimumSize: const Size(90, 40),
+                                    elevation: 0,
+                                  ),
+                                  child: const Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      fontFamily: 'Tommy',
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        // User is logged in, accept the challenge
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Challenge accepted! Good luck! 🌟'),
+                            backgroundColor: AppColors.primaryPink,
+                          ),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPink,

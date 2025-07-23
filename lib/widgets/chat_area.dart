@@ -26,41 +26,70 @@ class _ChatAreaState extends State<ChatArea> {
   bool _isLoading = false;
 
   Widget _buildPersonalityImage(String personality) {
-    IconData icon;
-    Color color;
+    String imagePath;
+    Color backgroundColor;
     switch (personality.toLowerCase()) {
       case 'calm':
-        icon = Icons.spa;
-        color = AppColors.pinkFont;
+        imagePath = 'images/calm.png';
+        backgroundColor = AppColors.pinkFont;
         break;
       case 'emo':
-        icon = Icons.psychology;
-        color = AppColors.blueFont;
+        imagePath = 'images/emo.png';
+        backgroundColor = AppColors.blueFont;
         break;
       case 'cheerful':
-        icon = Icons.wb_sunny;
-        color = Colors.green[700]!;
+        imagePath = 'images/cheerful.png';
+        backgroundColor = Colors.green[700]!;
         break;
       case 'humorous':
-        icon = Icons.emoji_emotions;
-        color = const Color(0xFFFF9800);
+        imagePath = 'images/humorous.png';
+        backgroundColor = const Color(0xFFFF9800);
         break;
       default:
-        icon = Icons.person;
-        color = AppColors.secondaryTosca;
+        imagePath = 'images/logo.png'; // fallback image
+        backgroundColor = AppColors.secondaryTosca;
     }
     return Container(
       height: MediaQuery.of(context).size.height * 0.28,
       width: double.infinity,
       alignment: Alignment.center,
-      child: Container(
-        width: 110,
-        height: 110,
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(24),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Image.asset(
+          imagePath,
+          width: 200,
+          height: 200,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback ke icon dengan background jika gambar tidak ditemukan
+            return Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                color: backgroundColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Icon(
+                () {
+                  switch (personality.toLowerCase()) {
+                    case 'calm':
+                      return Icons.spa;
+                    case 'emo':
+                      return Icons.psychology;
+                    case 'cheerful':
+                      return Icons.wb_sunny;
+                    case 'humorous':
+                      return Icons.emoji_emotions;
+                    default:
+                      return Icons.person;
+                  }
+                }(),
+                color: backgroundColor,
+                size: 90,
+              ),
+            );
+          },
         ),
-        child: Icon(icon, color: color, size: 64),
       ),
     );
   }
@@ -178,6 +207,26 @@ class _ChatAreaState extends State<ChatArea> {
                   itemBuilder: (context, index) {
                     final msg = _messages[index];
                     final isUser = msg['role'] == 'user';
+                    
+                    // Tentukan warna berdasarkan personality
+                    Color userChatColor;
+                    switch (widget.personality.toLowerCase()) {
+                      case 'calm':
+                        userChatColor = AppColors.primaryPink;
+                        break;
+                      case 'emo':
+                        userChatColor = AppColors.primaryBlue;
+                        break;
+                      case 'humorous':
+                        userChatColor = const Color(0xFFFFB366); // Orange pastel
+                        break;
+                      case 'cheerful':
+                        userChatColor = const Color(0xFF81C784); // Green pastel
+                        break;
+                      default:
+                        userChatColor = AppColors.primaryTosca;
+                    }
+                    
                     return Align(
                       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
@@ -185,7 +234,7 @@ class _ChatAreaState extends State<ChatArea> {
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                         decoration: BoxDecoration(
                           color: isUser
-                              ? AppColors.primaryTosca.withOpacity(0.8)
+                              ? userChatColor.withOpacity(0.8)
                               : Colors.grey[200],
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -224,6 +273,15 @@ class _ChatAreaState extends State<ChatArea> {
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: AppColors.brownFont, width: 2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                   onSubmitted: (value) => sendMessage(value),

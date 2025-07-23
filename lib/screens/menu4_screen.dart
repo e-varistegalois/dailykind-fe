@@ -43,126 +43,135 @@ class _Menu4ScreenState extends State<Menu4Screen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryGreen,
+        backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
           'Profile',
           style: TextStyle(
-            fontFamily: 'Tommy',
-            fontWeight: FontWeight.w600,
-            color: AppColors.secondaryGreen,
-            fontSize: 22,
+            fontFamily: 'CuteLove',
+            fontWeight: FontWeight.w700,
+            color: AppColors.greenFont,
+            fontSize: 26,
           ),
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 32),
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: _user?.photoURL != null
-                  ? NetworkImage(_user!.photoURL!)
-                  : null,
-              backgroundColor: AppColors.primaryGreen.withOpacity(0.3),
-              child: _user?.photoURL == null
-                  ? const Icon(Icons.person, size: 50, color: AppColors.secondaryGreen)
-                  : null,
-            ),
-            const SizedBox(height: 24),
-            Card(
-              color: AppColors.primaryGreen.withOpacity(0.2),
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: const BorderSide(color: AppColors.primaryGreen, width: 1),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 32),
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: _user?.photoURL != null
+                    ? NetworkImage(_user!.photoURL!)
+                    : null,
+                backgroundColor: AppColors.primaryGreen.withOpacity(0.4),
+                child: _user?.photoURL == null
+                    ? const Icon(Icons.person, size: 50, color: AppColors.secondaryGreen)
+                    : null,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Center(
-                      child: Text(
+              const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryGreen.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      const Text(
                         'User Information',
                         style: TextStyle(
                           fontFamily: 'Tommy',
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           color: AppColors.secondaryGreen,
                           fontSize: 20,
                         ),
                       ),
+                      const SizedBox(height: 24),
+                      _buildInfoField('Name', _user?.displayName ?? 'N/A'),
+                      const SizedBox(height: 16),
+                      _buildInfoField('Email', _user?.email ?? 'N/A'),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: SizedBox(
+                  width: 140,
+                  child: ElevatedButton(
+                    onPressed: _signOut,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(100, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
                     ),
-                    const SizedBox(height: 16),
-                    _buildInfoField('Name', _user?.displayName ?? 'N/A'),
-                    const SizedBox(height: 12),
-                    _buildInfoField('Email', _user?.email ?? 'N/A'),
-                    const SizedBox(height: 12),
-                    _buildInfoField('User ID', _user?.uid ?? 'N/A'),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: 120,
-              child: ElevatedButton(
-                onPressed: _signOut,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(100, 44),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    fontFamily: 'Tommy',
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    child: const Text(
+                      'Sign Out',
+                      style: TextStyle(
+                        fontFamily: 'Tommy',
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 32), // Extra padding at bottom
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildInfoField(String label, String value) {
-    return TextFormField(
-      initialValue: value,
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(
-          fontFamily: 'Tommy',
-          fontWeight: FontWeight.w500,
-          color: AppColors.secondaryGreen,
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.secondaryGreen, width: 2),
-        ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
       ),
-      style: const TextStyle(
-        fontFamily: 'Tommy',
-        fontWeight: FontWeight.w400,
-        color: AppColors.secondaryGreen,
-        fontSize: 15,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Tommy',
+              fontWeight: FontWeight.w600,
+              color: AppColors.secondaryGreen,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'Tommy',
+              fontWeight: FontWeight.w400,
+              color: AppColors.secondaryGreen,
+              fontSize: 16,
+            ),
+          ),
+        ],
       ),
     );
   }
