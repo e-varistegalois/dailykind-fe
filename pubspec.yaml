@@ -89,3 +89,6 @@ flutter:
       fonts:
         - asset: assets/fonts/Tommy.otf
           weight: 600
+
+  assets:
+    - assets/images/

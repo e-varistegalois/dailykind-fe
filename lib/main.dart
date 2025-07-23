@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/chatbot_screen.dart';
+import 'screens/welcome_screen.dart';
+import 'screens/notice_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,11 +64,12 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: MainMenuScreen(),
+      home: WelcomeScreen(),
       routes: {
         '/signin': (context) => SignInScreen(),
         '/mainmenu': (context) => MainMenuScreen(),
         '/chatbot': (context) => ChatbotScreen(),
+        '/notice': (context) => NoticeScreen(),
       },
     );
   }

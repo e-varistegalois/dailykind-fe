@@ -50,16 +50,17 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 
   void _onItemTapped(int index) {
     final user = FirebaseAuth.instance.currentUser;
-    setState(() {
-      _selectedIndex = index;
-    });
-
+    // Jika fitur butuh login dan user belum login, tampilkan dialog saja
     if (index >= 2 && user == null) {
       showDialog(
         context: context,
         builder: (context) => LandingLoginScreen(),
       );
+      return; // Jangan ubah halaman
     }
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
