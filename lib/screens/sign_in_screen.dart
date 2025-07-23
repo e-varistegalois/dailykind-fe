@@ -119,15 +119,6 @@ class _SignInScreenState extends State<SignInScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Welcome to ',
-                    style: TextStyle(
-                      fontFamily: 'Tommy',
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.pinkFont,
-                    ),
-                  ),
-                  const Text(
                     'DailyKind',
                     style: TextStyle(
                       fontFamily: 'CuteLove',
@@ -136,24 +127,15 @@ class _SignInScreenState extends State<SignInScreen> {
                       color: AppColors.pinkFont,
                     ),
                   ),
-                  const Text(
-                    '!',
-                    style: TextStyle(
-                      fontFamily: 'Tommy',
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.pinkFont,
-                    ),
-                  ),
                 ],
               ),
               const SizedBox(height: 16),
               const Text(
-                'Your personal companion for daily wellness and meaningful conversations',
+                'Your digital companion for a kinder, more mindful day.',
                 style: TextStyle(
                   fontFamily: 'Tommy',
                   fontSize: 16,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.brownFont,
                 ),
                 textAlign: TextAlign.center,

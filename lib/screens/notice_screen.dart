@@ -19,7 +19,7 @@ class NoticeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(flex: 2),
-              // Ilustrasi icon besar
+              // Ilustrasi placeholder image
               Container(
                 width: 100,
                 height: 100,
@@ -35,7 +35,7 @@ class NoticeScreen extends StatelessWidget {
                   ],
                 ),
                 child: const Icon(
-                  Icons.favorite_rounded,
+                  Icons.image,
                   size: 48,
                   color: _darkOrange,
                 ),
@@ -44,14 +44,12 @@ class NoticeScreen extends StatelessWidget {
               // Card warning
               Card(
                 color: Colors.white,
-                elevation: 4,
+                elevation: 1,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 18),
                   child: Column(
                     children: [
-                      Icon(Icons.warning_amber_rounded, color: _darkOrange, size: 38),
-                      SizedBox(height: 16),
                       Text(
                         'Important Reminder',
                         textAlign: TextAlign.center,
