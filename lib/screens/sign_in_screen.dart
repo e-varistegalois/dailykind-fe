@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../services/google_sign_in_service.dart';
+import '../constants/app_colors.dart';
 
 class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
+
   @override
-  _SignInScreenState createState() => _SignInScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> {
@@ -20,7 +23,7 @@ class _SignInScreenState extends State<SignInScreen> {
     try {
       final UserCredential? result = await _signInService.signInWithGoogle();
 
-      if (result != null) {
+      if (result != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Welcome ${result.user?.displayName ?? 'User'}!'),
@@ -28,38 +31,51 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         );
 
-        Navigator.pushReplacementNamed(context, '/home');
-      } else {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/mainmenu');
+        }
+      } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Sign in was cancelled'),
             backgroundColor: Colors.orange,
           ),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    const lilacColor = Color(0xFFC8A2C8); // Lilac
-
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Google Sign In'),
+        title: const Text(
+          'Google Sign In',
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w600,
+            color: AppColors.secondaryPink,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: lilacColor,
+        backgroundColor: AppColors.primaryPink,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -69,45 +85,55 @@ class _SignInScreenState extends State<SignInScreen> {
             Icon(
               Icons.account_circle,
               size: 100,
-              color: Colors.grey[600],
+              color: AppColors.secondaryPink.withOpacity(0.5),
             ),
-            SizedBox(height: 32),
-            Text(
+            const SizedBox(height: 32),
+            const Text(
               'Welcome!',
               style: TextStyle(
+                fontFamily: 'Tommy',
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+                color: AppColors.secondaryPink,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'Please sign in to continue',
               style: TextStyle(
+                fontFamily: 'Tommy',
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: AppColors.secondaryPink.withOpacity(0.7),
               ),
             ),
-            SizedBox(height: 48),
+            const SizedBox(height: 48),
             _isLoading
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator(
+                    color: AppColors.secondaryPink,
+                  )
                 : ElevatedButton.icon(
                     onPressed: _signInWithGoogle,
-                    icon: FaIcon(FontAwesomeIcons.google, color: Colors.black),
-                    label: Text(
+                    icon: const FaIcon(
+                      FontAwesomeIcons.google, 
+                      color: AppColors.secondaryPink
+                    ),
+                    label: const Text(
                       'Sign in with Google',
                       style: TextStyle(
+                        fontFamily: 'Tommy',
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.secondaryPink,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: lilacColor,
-                      foregroundColor: Colors.black,
-                      minimumSize: Size(double.infinity, 50),
+                      backgroundColor: AppColors.primaryPink,
+                      foregroundColor: AppColors.secondaryPink,
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
+                      elevation: 0,
                     ),
                   ),
           ],
