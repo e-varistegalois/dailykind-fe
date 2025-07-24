@@ -99,11 +99,11 @@ class _SignInScreenState extends State<SignInScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'images/logo.png',
+              const SizedBox(height: 60),
+              // Icon dengan background soft
+              Container(
                 width: 120,
                 height: 120,
-                fit: BoxFit.contain,
                 decoration: BoxDecoration(
                   color: AppColors.primaryPink.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(60),
