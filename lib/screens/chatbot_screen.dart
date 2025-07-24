@@ -25,22 +25,22 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     {
       'label': 'Calm',
       'desc': 'Ready to listen with patience',
-      'image': 'images/calm.png',
+      'image': 'assets/images/calm.png',
     },
     {
       'label': 'Emo',
       'desc': 'Wants to hear your real thoughts',
-      'image': 'images/emo.png',
+      'image': 'assets/images/emo.png',
     },
     {
       'label': 'Humorous',
       'desc': 'Excited for your funny stories',
-      'image': 'images/humorous.png',
+      'image': 'assets/images/humorous.png',
     },
     {
       'label': 'Cheerful',
       'desc': 'Eager to celebrate with you',
-      'image': 'images/cheerful.png',
+      'image': 'assets/images/cheerful.png',
     },
   ];
 

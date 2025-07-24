@@ -20,7 +20,7 @@ class NoticeScreen extends StatelessWidget {
             children: [
               const Spacer(flex: 2),
               Image.asset(
-                'images/warning.png',
+                'assets/images/warning.png',
                 width: 120,
                 height: 120,
                 fit: BoxFit.contain,

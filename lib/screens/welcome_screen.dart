@@ -89,7 +89,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     child: Opacity(
                       opacity: _logoAnimation.value,
                       child: Image.asset(
-                        'images/logo.png',
+                        'assets/images/logo.png',
                         height: MediaQuery.of(context).size.height * 0.28,
                       ),
                     ),

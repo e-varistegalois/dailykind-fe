@@ -97,4 +97,9 @@ flutter:
           weight: 600
 
   assets:
-    - assets/images/
+    - assets/images/calm.png
+    - assets/images/cheerful.png
+    - assets/images/emo.png
+    - assets/images/humorous.png
+    - assets/images/logo.png
+    - assets/images/warning.png

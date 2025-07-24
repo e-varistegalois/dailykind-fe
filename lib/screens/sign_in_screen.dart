@@ -102,7 +102,7 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(height: 60),
               // Icon dengan background soft
               Image.asset(
-                'images/logo.png',
+                'assets/images/logo.png',
                 width: 120,
                 height: 120,
                 fit: BoxFit.contain,

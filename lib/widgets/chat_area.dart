@@ -30,23 +30,23 @@ class _ChatAreaState extends State<ChatArea> {
     Color backgroundColor;
     switch (personality.toLowerCase()) {
       case 'calm':
-        imagePath = 'images/calm.png';
+        imagePath = 'assets/images/calm.png';
         backgroundColor = AppColors.pinkFont;
         break;
       case 'emo':
-        imagePath = 'images/emo.png';
+        imagePath = 'assets/images/emo.png';
         backgroundColor = AppColors.blueFont;
         break;
       case 'cheerful':
-        imagePath = 'images/cheerful.png';
+        imagePath = 'assets/images/cheerful.png';
         backgroundColor = Colors.green[700]!;
         break;
       case 'humorous':
-        imagePath = 'images/humorous.png';
+        imagePath = 'assets/images/humorous.png';
         backgroundColor = const Color(0xFFFF9800);
         break;
       default:
-        imagePath = 'images/logo.png'; // fallback image
+        imagePath = 'assets/images/logo.png'; // fallback image
         backgroundColor = AppColors.secondaryTosca;
     }
     return Container(
