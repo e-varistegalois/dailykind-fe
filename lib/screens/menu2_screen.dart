@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import '../constants/app_colors.dart';
 import '../constants/globals.dart';
 import '../models/kindness_post.dart';
 import '../models/challenge.dart';
 import '../services/challenge_service.dart';
+import '../widgets/like_button.dart';
+import '../widgets/post_detail_dialog.dart'; 
 
 class Menu2Screen extends StatefulWidget {
   const Menu2Screen({super.key});
@@ -19,10 +22,12 @@ class _Menu2ScreenState extends State<Menu2Screen> {
   bool isLoading = true;
   String? errorMessage;
   Challenge? currentChallenge;
-
+  User? currentUser;
+  
   @override
   void initState() {
     super.initState();
+    currentUser = FirebaseAuth.instance.currentUser; 
     fetchCurrentChallengeAndPosts();
   }
 
@@ -33,7 +38,6 @@ class _Menu2ScreenState extends State<Menu2Screen> {
         errorMessage = null;
       });
 
-      // First, get the current active challenge
       final challenge = await ChallengeService.fetchActiveChallenge();
       
       if (challenge != null) {
@@ -41,7 +45,6 @@ class _Menu2ScreenState extends State<Menu2Screen> {
           currentChallenge = challenge;
         });
 
-        // Then fetch posts for this challenge
         await fetchPostsForChallenge(challenge.id);
       } else {
         setState(() {
@@ -59,24 +62,27 @@ class _Menu2ScreenState extends State<Menu2Screen> {
 
   Future<void> fetchPostsForChallenge(String challengeId) async {
     try {
+      String url = '$apiBaseUrl/post/$challengeId';
+      if (currentUser != null) {
+        url += '/?userId=${currentUser!.uid}';
+      }
+      
       final response = await http.get(
-        Uri.parse('$apiBaseUrl/post/$challengeId'),
+        Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
         },
       );
-
+      
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
         
-        // Handle both single object and list responses
         List<dynamic> postsData;
         if (data is List) {
           postsData = data;
         } else if (data is Map && data['posts'] != null) {
           postsData = data['posts'] as List;
         } else {
-          // If it's a single object, wrap it in a list
           postsData = [data];
         }
         
@@ -99,7 +105,26 @@ class _Menu2ScreenState extends State<Menu2Screen> {
   }
 
   Future<void> refreshPosts() async {
+    currentUser = FirebaseAuth.instance.currentUser;
     await fetchCurrentChallengeAndPosts();
+  }
+
+  // Simple callback untuk refresh posts setelah like
+  void _onLikeChanged() {
+    if (currentChallenge != null) {
+      fetchPostsForChallenge(currentChallenge!.id);
+    }
+  }
+
+  // Show post detail dialog
+  void _showPostDetail(KindnessPost post) {
+    showDialog(
+      context: context,
+      builder: (context) => PostDetailDialog(
+        post: post,
+        onLikeChanged: _onLikeChanged,
+      ),
+    );
   }
 
   @override
@@ -121,6 +146,33 @@ class _Menu2ScreenState extends State<Menu2Screen> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: currentUser != null 
+                      ? AppColors.primaryBlue.withOpacity(0.1)
+                      : AppColors.brownFont.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  currentUser != null ? 'Logged In' : 'Guest',
+                  style: TextStyle(
+                    fontFamily: 'Tommy',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 10,
+                    color: currentUser != null 
+                        ? AppColors.blueFont
+                        : AppColors.brownFont,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: refreshPosts,
@@ -159,7 +211,6 @@ class _Menu2ScreenState extends State<Menu2Screen> {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const Text(
                             'Current Challenge',
@@ -169,7 +220,6 @@ class _Menu2ScreenState extends State<Menu2Screen> {
                               fontSize: 12,
                               color: AppColors.blueFont,
                             ),
-                            textAlign: TextAlign.start,
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -183,7 +233,6 @@ class _Menu2ScreenState extends State<Menu2Screen> {
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.start,
                           ),
                         ],
                       ),
@@ -224,7 +273,6 @@ class _Menu2ScreenState extends State<Menu2Screen> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  const SizedBox(height: 16),
                                 ],
                               ),
                             ),
@@ -249,7 +297,6 @@ class _Menu2ScreenState extends State<Menu2Screen> {
                                         ),
                                         textAlign: TextAlign.center,
                                       ),
-                                      SizedBox(height: 16),
                                     ],
                                   ),
                                 ),
@@ -279,161 +326,169 @@ class _Menu2ScreenState extends State<Menu2Screen> {
   }
 
   Widget _buildPostCard(KindnessPost post) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image section
-          Expanded(
-            flex: 3,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                color: AppColors.primaryBlue.withOpacity(0.1),
-              ),
-              child: post.imageUrl != null
-                  ? ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                      child: Image.network(
-                        post.imageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: AppColors.primaryBlue.withOpacity(0.1),
-                            child: const Icon(
-                              Icons.image,
-                              size: 48,
-                              color: AppColors.blueFont,
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: () => _showPostDetail(post), // ← ADD TAP TO OPEN DETAIL
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image section
+            Expanded(
+              flex: 3,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  color: AppColors.primaryBlue.withOpacity(0.1),
+                ),
+                child: post.imageUrl != null
+                    ? ClipRRect(
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            AppColors.primaryBlue.withOpacity(0.2),
-                            AppColors.secondaryBlue.withOpacity(0.1),
-                          ],
+                        child: Image.network(
+                          post.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppColors.primaryBlue.withOpacity(0.1),
+                              child: const Icon(
+                                Icons.image,
+                                size: 48,
+                                color: AppColors.blueFont,
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              AppColors.primaryBlue.withOpacity(0.2),
+                              AppColors.secondaryBlue.withOpacity(0.1),
+                            ],
+                          ),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.favorite,
+                            size: 32,
+                            color: AppColors.blueFont,
+                          ),
                         ),
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.favorite,
-                          size: 32,
-                          color: AppColors.blueFont,
-                        ),
-                      ),
-                    ),
+              ),
             ),
-          ),
-          // Content section
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // User info
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 12,
-                        backgroundColor: AppColors.primaryBlue.withOpacity(0.2),
-                        backgroundImage: post.userProfileImage != null
-                            ? NetworkImage(post.userProfileImage!)
-                            : null,
-                        child: post.userProfileImage == null
-                            ? Text(
-                                post.userName.isNotEmpty ? post.userName[0].toUpperCase() : 'U',
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.blueFont,
-                                ),
-                              )
-                            : null,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          post.userName,
-                          style: const TextStyle(
-                            fontFamily: 'Tommy',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                            color: AppColors.brownFont,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+            // Content section
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // User info
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundColor: AppColors.primaryBlue.withOpacity(0.2),
+                          backgroundImage: post.userProfileImage != null
+                              ? NetworkImage(post.userProfileImage!)
+                              : null,
+                          child: post.userProfileImage == null
+                              ? Text(
+                                  post.userName.isNotEmpty ? post.userName[0].toUpperCase() : 'U',
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.blueFont,
+                                  ),
+                                )
+                              : null,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  // Content
-                  Expanded(
-                    child: Text(
-                      post.content,
-                      style: const TextStyle(
-                        fontFamily: 'Tommy',
-                        fontWeight: FontWeight.w400,
-                        fontSize: 11,
-                        color: AppColors.brownFont,
-                        height: 1.3,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  // Likes and time
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            post.isLiked ? Icons.favorite : Icons.favorite_border,
-                            size: 16,
-                            color: post.isLiked ? Colors.red : AppColors.brownFont.withOpacity(0.6),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${post.likesCount}',
-                            style: TextStyle(
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            post.userName,
+                            style: const TextStyle(
                               fontFamily: 'Tommy',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              color: AppColors.brownFont.withOpacity(0.8),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                              color: AppColors.brownFont,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    // Content with "tap to read more" hint
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              post.content,
+                              style: const TextStyle(
+                                fontFamily: 'Tommy',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 11,
+                                color: AppColors.brownFont,
+                                height: 1.3,
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          if (post.content.length > 50) // Show hint if content is long
+                            const Text(
+                              'Tap to read more...',
+                              style: TextStyle(
+                                fontFamily: 'Tommy',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10,
+                                color: AppColors.primaryBlue,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
                         ],
                       ),
-                      Text(
-                        _formatTime(post.createdAt),
-                        style: TextStyle(
-                          fontFamily: 'Tommy',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 9,
-                          color: AppColors.brownFont.withOpacity(0.6),
+                    ),
+                    
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LikeButton(
+                          postId: post.id,
+                          likesCount: post.likesCount,
+                          isLiked: post.isLiked,
+                          onLikeChanged: _onLikeChanged, 
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Text(
+                          _formatTime(post.createdAt),
+                          style: TextStyle(
+                            fontFamily: 'Tommy',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 9,
+                            color: AppColors.brownFont.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

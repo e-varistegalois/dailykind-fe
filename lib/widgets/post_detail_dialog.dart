@@ -1,0 +1,181 @@
+import 'package:flutter/material.dart';
+import '../constants/app_colors.dart';
+import '../models/kindness_post.dart';
+import 'like_button.dart';
+
+class PostDetailDialog extends StatelessWidget {
+  final KindnessPost post;
+  final VoidCallback onLikeChanged;
+
+  const PostDetailDialog({
+    super.key,
+    required this.post,
+    required this.onLikeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+          maxWidth: MediaQuery.of(context).size.width * 0.9,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header with close button
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.primaryBlue.withOpacity(0.1),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: AppColors.primaryBlue.withOpacity(0.2),
+                    backgroundImage: post.userProfileImage != null
+                        ? NetworkImage(post.userProfileImage!)
+                        : null,
+                    child: post.userProfileImage == null
+                        ? Text(
+                            post.userName.isNotEmpty ? post.userName[0].toUpperCase() : 'U',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.blueFont,
+                            ),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          post.userName,
+                          style: const TextStyle(
+                            fontFamily: 'Tommy',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: AppColors.blueFont,
+                          ),
+                        ),
+                        Text(
+                          _formatTime(post.createdAt),
+                          style: TextStyle(
+                            fontFamily: 'Tommy',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 11,
+                            color: AppColors.brownFont.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(
+                      Icons.close,
+                      color: AppColors.blueFont,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Content
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image section
+                    if (post.imageUrl != null)
+                      Container(
+                        width: double.infinity,
+                        constraints: const BoxConstraints(
+                          maxHeight: 300,
+                        ),
+                        child: Image.network(
+                          post.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 200,
+                              color: AppColors.primaryBlue.withOpacity(0.1),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.image,
+                                  size: 48,
+                                  color: AppColors.blueFont,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    // Text content section - NO MORE "Caption" LABEL
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (post.content.isNotEmpty) ...[
+                            Text(
+                              post.content,
+                              style: const TextStyle(
+                                fontFamily: 'Tommy',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14, 
+                                color: AppColors.brownFont,
+                                height: 1.4,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                          // Like button
+                          Row(
+                            children: [
+                              LikeButton(
+                                postId: post.id,
+                                likesCount: post.likesCount,
+                                isLiked: post.isLiked,
+                                onLikeChanged: onLikeChanged,
+                              ),
+                              const Spacer(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} minutes ago';
+    } else {
+      return 'Just now';
+    }
+  }
+}

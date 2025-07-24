@@ -98,7 +98,7 @@ class _Menu4ScreenState extends State<Menu4Screen> {
                       const SizedBox(height: 24),
                       _buildInfoField('Name', _user?.displayName ?? 'N/A'),
                       const SizedBox(height: 16),
-                      _buildInfoField('Email', _user?.email ?? 'N/A'),
+                      _buildInfoField('Email', _user?.email ?? 'N/A')
                     ],
                   ),
                 ),
