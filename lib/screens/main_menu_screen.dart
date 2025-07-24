@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../constants/app_colors.dart';
+import '../utils/dialog_utils.dart'; 
 import 'menu1_screen.dart';
 import 'menu2_screen.dart';
 import 'chatbot_screen.dart';
 import 'menu3_screen.dart';
 import 'menu4_screen.dart';
-import 'landing_login_screen.dart';
 
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
@@ -52,14 +52,16 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 
   void _onItemTapped(int index) {
     final user = FirebaseAuth.instance.currentUser;
-    // Jika fitur butuh login dan user belum login, tampilkan dialog saja
+    
+    // Jika fitur butuh login dan user belum login, tampilkan dialog dengan warna sesuai fitur
     if (index >= 2 && user == null) {
-      showDialog(
-        context: context,
-        builder: (context) => const LandingLoginScreen(),
+      DialogUtils.showLoginRequiredForFeature(
+        context, 
+        color: _secondaryColors[index], // ← PASS COLOR BASED ON FEATURE
       );
       return; // Jangan ubah halaman
     }
+    
     setState(() {
       _selectedIndex = index;
     });
