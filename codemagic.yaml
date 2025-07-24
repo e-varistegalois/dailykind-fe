@@ -31,7 +31,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - vinkakniv@gmail.com
+          - vinka.aeris@gmail.com
         notify:
           success: true
           failure: true
@@ -69,7 +69,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - vinkakniv@gmail.com
+          - vinka.aeris@gmail.com
         notify:
           success: true
           failure: true
