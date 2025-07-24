@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../constants/globals.dart';
+import './challenge_service.dart';
 
 class PostService {
   static const String _baseUrl = '$apiBaseUrl/post';
 
-  // Upload post with image (auto published, no status field)
+  // Upload post with image (published status)
   static Future<Map<String, dynamic>> uploadPost({
     required String userId,
     required String challengeId,
@@ -20,10 +21,11 @@ class PostService {
         Uri.parse('$_baseUrl/upload-post'),
       );
 
-      // Add form data (no status field - auto published)
+      // Add form data with PUBLISHED status
       request.fields['user_id'] = userId;
       request.fields['challenge_id'] = challengeId;
-      request.fields['text'] = text;
+      request.fields['content'] = text;
+      request.fields['status'] = 'PUBLISHED';
       
       // Add image file
       request.files.add(
@@ -50,7 +52,7 @@ class PostService {
     }
   }
 
-  // Upload post with text only (auto published, no status field)
+  // Upload post with text only (published status)
   static Future<Map<String, dynamic>> uploadTextPost({
     required String userId,
     required String challengeId,
@@ -62,10 +64,11 @@ class PostService {
         Uri.parse('$_baseUrl/upload-post'),
       );
 
-      // Add form data (no status field - auto published)
+      // Add form data with PUBLISHED status
       request.fields['user_id'] = userId;
       request.fields['challenge_id'] = challengeId;
       request.fields['text'] = text;
+      request.fields['status'] = 'PUBLISHED';
       
       // No image file added for text-only posts
 
@@ -100,10 +103,11 @@ class PostService {
         Uri.parse('$_baseUrl/$postId'),
       );
 
-      // Add form data
+      // Add form data with PUBLISHED status (when updating draft, it becomes published)
       request.fields['user_id'] = userId;
       request.fields['challenge_id'] = challengeId;
-      request.fields['text'] = text;
+      request.fields['content'] = text;
+      request.fields['status'] = 'PUBLISHED'; // Important: mark as published when updating draft
       
       // Add image file if provided
       if (image != null) {
@@ -146,8 +150,55 @@ class PostService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // API returns {"drafts": [...], "count": 1, "message": "..."}
-        return List<Map<String, dynamic>>.from(data['drafts'] ?? []);
+        List<Map<String, dynamic>> drafts = List<Map<String, dynamic>>.from(data['drafts'] ?? []);
+        
+        // Enrich each draft with challenge content
+        for (int i = 0; i < drafts.length; i++) {
+          final draft = drafts[i];
+          final challengeId = draft['challengeId'] ?? draft['challenge_id'];
+          
+          debugPrint('🔍 Processing draft ${i + 1}: challengeId = $challengeId');
+          debugPrint('🔍 Draft data: ${draft.keys.toList()}');
+          
+          if (challengeId != null) {
+            try {
+              debugPrint('🌐 Fetching challenge content for ID: $challengeId');
+              final challenge = await ChallengeService.fetchChallengeById(challengeId);
+              if (challenge != null) {
+                debugPrint('✅ Challenge found: ${challenge.content}');
+                // Add the actual challenge content to the draft
+                drafts[i] = {
+                  ...draft,
+                  'challengeContent': challenge.content,
+                };
+                debugPrint('✅ Draft enriched with challengeContent: ${challenge.content}');
+              } else {
+                debugPrint('❌ Challenge not found for ID: $challengeId');
+                // Fallback if challenge not found
+                drafts[i] = {
+                  ...draft,
+                  'challengeContent': 'Complete this challenge',
+                };
+              }
+            } catch (e) {
+              debugPrint('❌ Error fetching challenge for draft: $e');
+              // Add fallback content
+              drafts[i] = {
+                ...draft,
+                'challengeContent': 'Complete this challenge',
+              };
+            }
+          } else {
+            debugPrint('❌ No challenge ID found in draft');
+            // No challenge ID found, add fallback
+            drafts[i] = {
+              ...draft,
+              'challengeContent': 'Complete this challenge',
+            };
+          }
+        }
+        
+        return drafts;
       } else {
         throw Exception('Failed to get drafts: ${response.statusCode}');
       }
@@ -237,6 +288,7 @@ class PostService {
     required String userId,
     required String challengeId,
     String? text,
+    String? challengeContent,
   }) async {
     try {
       final request = http.MultipartRequest(
@@ -247,7 +299,7 @@ class PostService {
       // Add form data for draft - match the API field names
       request.fields['user_id'] = userId;
       request.fields['challenge_id'] = challengeId;
-      request.fields['text'] = text ?? 'Draft: Ready to complete this challenge!';
+      request.fields['content'] = text ?? '';
       request.fields['status'] = 'DRAFT';
 
       final response = await request.send();
@@ -257,7 +309,12 @@ class PostService {
       debugPrint('Response Body: $responseBody');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return json.decode(responseBody);
+        final result = json.decode(responseBody);
+        // Add challengeContent to the result for local use
+        if (challengeContent != null) {
+          result['challengeContent'] = challengeContent;
+        }
+        return result;
       } else {
         throw Exception('Failed to create draft: ${response.statusCode} - $responseBody');
       }

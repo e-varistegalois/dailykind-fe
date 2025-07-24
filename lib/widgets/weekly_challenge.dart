@@ -181,11 +181,12 @@ class WeeklyChallenge extends StatelessWidget {
         ),
       );
 
-      // Call API to create draft with placeholder text
+      // Call API to create draft with challenge content
       await PostService.createDraftPost(
         userId: user.uid,
         challengeId: challenge.id,
-        text: 'Draft: Ready to complete this challenge!', // Placeholder text
+        text: '', // Empty text for now
+        challengeContent: challenge.content, // Pass the real challenge content
       );
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();

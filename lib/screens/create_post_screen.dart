@@ -39,10 +39,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _submitPost() async {
-    if (_selectedImage == null) {
+    final hasImage = _selectedImage != null;
+    final hasText = _textController.text.trim().isNotEmpty;
+    
+    // At least one of image or text must be provided
+    if (!hasImage && !hasText) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please select an image'),
+          content: Text('Please add either an image or some text to share your story'),
           backgroundColor: Colors.red,
         ),
       );
@@ -57,12 +61,22 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
 
     try {
-      await PostService.uploadPost(
-        userId: user.uid,
-        challengeId: widget.challenge.id,
-        text: _textController.text,
-        image: _selectedImage!,
-      );
+      if (hasImage) {
+        // Post with image
+        await PostService.uploadPost(
+          userId: user.uid,
+          challengeId: widget.challenge.id,
+          text: _textController.text,
+          image: _selectedImage!,
+        );
+      } else {
+        // Post with text only
+        await PostService.uploadTextPost(
+          userId: user.uid,
+          challengeId: widget.challenge.id,
+          text: _textController.text,
+        );
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -179,14 +193,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             const SizedBox(height: 24),
             
             // Image Selection
-            const Text(
-              'Add a Photo',
-              style: TextStyle(
-                fontFamily: 'Tommy',
-                fontWeight: FontWeight.w600,
-                color: AppColors.brownFont,
-                fontSize: 16,
-              ),
+            Row(
+              children: [
+                const Text(
+                  'Add a Photo',
+                  style: TextStyle(
+                    fontFamily: 'Tommy',
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.brownFont,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryPink.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Optional',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.primaryPink,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             GestureDetector(
@@ -225,6 +260,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               fontFamily: 'Tommy',
                               color: Colors.grey[500],
                               fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Add photo or text below to complete',
+                            style: TextStyle(
+                              fontFamily: 'Tommy',
+                              color: Colors.grey[400],
+                              fontSize: 12,
                             ),
                           ),
                         ],
