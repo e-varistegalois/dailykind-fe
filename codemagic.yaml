@@ -5,11 +5,7 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       android_signing:
-        - keystore_reference: my-debug-keystore
-          keystore: my-debug.keystore 
-          keystore_password: android
-          key_alias: androiddebugkey
-          key_password: android
+        - my-debug-keystore
       vars:
         FIREBASE_APP_ID: 1:884358901774:android:6c7a60fb2942902904cc5f
       flutter: stable
@@ -33,11 +29,47 @@ workflows:
       - build/app/outputs/flutter-apk/*.apk
     
     publishing:
-      firebase_app_distribution:
-        app_id: 1:884358901774:android:6c7a60fb2942902904cc5f
-        groups:
-          - testers
-        release_notes: |
-          DailyKind Auto Build
-          Branch: $CM_BRANCH
-          Commit: $CM_COMMIT
+      email:
+        recipients:
+          - vinkakniv@gmail.com
+        notify:
+          success: true
+          failure: true
+
+  dailykind-release:
+    name: DailyKind Release Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      android_signing:
+        - my-release-keystore
+      vars:
+        FIREBASE_APP_ID: 1:884358901774:android:6c7a60fb2942902904cc5f
+      flutter: stable
+      java: 11
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'v*.*.*'
+          include: true
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      
+      - name: Build Release
+        script: |
+          flutter build apk --release
+          flutter build appbundle --release
+      
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/release/*.aab
+    
+    publishing:
+      email:
+        recipients:
+          - vinkakniv@gmail.com
+        notify:
+          success: true
+          failure: true
