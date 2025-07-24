@@ -37,6 +37,7 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   icons_plus: ^5.0.0
   boxicons: ^2.1.3
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:

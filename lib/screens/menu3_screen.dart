@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../constants/app_colors.dart';
-import '../constants/globals.dart';
-import '../models/kindness_post.dart';
+import '../services/post_service.dart';
+import '../screens/complete_post_screen.dart';
 
 class Menu3Screen extends StatefulWidget {
   const Menu3Screen({super.key});
@@ -14,7 +13,8 @@ class Menu3Screen extends StatefulWidget {
 }
 
 class _Menu3ScreenState extends State<Menu3Screen> {
-  List<KindnessPost> userPosts = [];
+  List<Map<String, dynamic>> draftPosts = [];
+  List<Map<String, dynamic>> publishedPosts = [];
   bool isLoading = true;
   String? errorMessage;
 
@@ -40,49 +40,19 @@ class _Menu3ScreenState extends State<Menu3Screen> {
     }
 
     try {
-      final response = await http.get(
-        Uri.parse('$apiBaseUrl/post/user/${user.uid}'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final dynamic data = json.decode(response.body);
-        
-        // Handle single object response
-        if (data is Map) {
-          // If the response contains a list of posts
-          if (data['posts'] != null && data['posts'] is List) {
-            final postsData = data['posts'] as List;
-            setState(() {
-              userPosts = postsData.map((json) => KindnessPost.fromJson(json as Map<String, dynamic>)).toList();
-              isLoading = false;
-            });
-          } else {
-            // If it's a single post object
-            setState(() {
-              userPosts = [KindnessPost.fromJson(data as Map<String, dynamic>)];
-              isLoading = false;
-            });
-          }
-        } else if (data is List) {
-          setState(() {
-            userPosts = data.map((json) => KindnessPost.fromJson(json as Map<String, dynamic>)).toList();
-            isLoading = false;
-          });
-        } else {
-          setState(() {
-            errorMessage = 'Unexpected response format';
-            isLoading = false;
-          });
-        }
-      } else {
-        setState(() {
-          errorMessage = 'Failed to load your kindness posts';
-          isLoading = false;
-        });
-      }
+      final posts = await PostService.getUserPosts(userId: user.uid);
+      
+      debugPrint('Fetched posts from service:');
+      debugPrint('Blooming: ${posts['blooming']?.length ?? 0}');
+      debugPrint('Bloomed: ${posts['bloomed']?.length ?? 0}');
+      
+      setState(() {
+        draftPosts = posts['blooming'] ?? [];
+        publishedPosts = posts['bloomed'] ?? [];
+        isLoading = false;
+      });
+      
+      debugPrint('State updated - draftPosts: ${draftPosts.length}, publishedPosts: ${publishedPosts.length}');
     } catch (e) {
       setState(() {
         errorMessage = 'Error loading posts: ${e.toString()}';
@@ -164,7 +134,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
                       ),
                     ),
                   )
-                : userPosts.isEmpty
+                : (draftPosts.isEmpty && publishedPosts.isEmpty)
                     ? SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: SizedBox(
@@ -180,7 +150,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
                                 ),
                                 SizedBox(height: 16),
                                 Text(
-                                  'No blooms yet!\nComplete some challenges to grow your garden.',
+                                  'No blooms yet!\nAccept some challenges to grow your garden.',
                                   style: TextStyle(
                                     fontFamily: 'Tommy',
                                     fontWeight: FontWeight.w600,
@@ -195,21 +165,207 @@ class _Menu3ScreenState extends State<Menu3Screen> {
                           ),
                         ),
                       )
-                    : Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: userPosts.length,
-                          itemBuilder: (context, index) {
-                            return _buildCompletedChallengeCard(userPosts[index]);
-                          },
-                        ),
-                      ),
+                    : _buildPostsList(),
       ),
     );
   }
 
-  Widget _buildCompletedChallengeCard(KindnessPost post) {
+  Widget _buildPostsList() {
+    debugPrint('Building posts list - draftPosts: ${draftPosts.length}, publishedPosts: ${publishedPosts.length}');
+    
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Debug info
+          if (draftPosts.isNotEmpty || publishedPosts.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Debug: Drafts: ${draftPosts.length}, Published: ${publishedPosts.length}',
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+          
+          // Blooming section (Drafts)
+          if (draftPosts.isNotEmpty) ...[
+            _buildSectionHeader('🌱 Blooming', 'Complete these to make them bloom!'),
+            const SizedBox(height: 12),
+            ...draftPosts.map((post) => _buildDraftCard(post)),
+            const SizedBox(height: 24),
+          ],
+          
+          // Bloomed section (Published)
+          if (publishedPosts.isNotEmpty) ...[
+            _buildSectionHeader('🌸 Bloomed', 'Your completed kindness acts'),
+            const SizedBox(height: 12),
+            ...publishedPosts.map((post) => _buildPublishedCard(post)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, String subtitle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w700,
+            color: AppColors.brownFont,
+            fontSize: 20,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: TextStyle(
+            fontFamily: 'Tommy',
+            fontWeight: FontWeight.w400,
+            color: AppColors.brownFont.withOpacity(0.7),
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDraftCard(Map<String, dynamic> post) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.primaryPink.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryPink.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryPink.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.edit_outlined,
+                    color: AppColors.primaryPink,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Ready to complete!',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryPink,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryPink.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    '🌱 Blooming',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                      color: AppColors.primaryPink,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              post['challenge']?['content'] ?? post['content'] ?? 'Challenge',
+              style: const TextStyle(
+                fontFamily: 'Tommy',
+                fontWeight: FontWeight.w500,
+                color: AppColors.brownFont,
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  // Navigate to complete post screen
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CompletePostScreen(
+                        challengeId: post['challengeId'],
+                        challengeContent: post['content'] ?? 'Complete this challenge',
+                        postId: post['id'],
+                      ),
+                    ),
+                  );
+                  
+                  // Refresh if post was completed
+                  if (result == true) {
+                    fetchUserPosts();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryPink,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text(
+                  'Complete Challenge',
+                  style: TextStyle(
+                    fontFamily: 'Tommy',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPublishedCard(Map<String, dynamic> post) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -272,7 +428,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
                   ),
                 ),
                 Text(
-                  _formatDate(post.createdAt),
+                  _formatDate(post['createdAt']),
                   style: TextStyle(
                     fontFamily: 'Tommy',
                     fontWeight: FontWeight.w500,
@@ -290,7 +446,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  post.content,
+                  post['content'] ?? '',
                   style: const TextStyle(
                     fontFamily: 'Tommy',
                     fontWeight: FontWeight.w500,
@@ -299,12 +455,12 @@ class _Menu3ScreenState extends State<Menu3Screen> {
                     height: 1.4,
                   ),
                 ),
-                if (post.imageUrl != null) ...[
+                if (post['imageUrl'] != null) ...[
                   const SizedBox(height: 12),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      post.imageUrl!,
+                      post['imageUrl'],
                       width: double.infinity,
                       height: 200,
                       fit: BoxFit.cover,
@@ -338,7 +494,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${post.likesCount} likes',
+                      '${post['likesCount'] ?? 0} likes',
                       style: TextStyle(
                         fontFamily: 'Tommy',
                         fontWeight: FontWeight.w500,
@@ -373,18 +529,25 @@ class _Menu3ScreenState extends State<Menu3Screen> {
     );
   }
 
-  String _formatDate(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
+  String _formatDate(String? dateString) {
+    if (dateString == null) return '';
+    
+    try {
+      final dateTime = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(dateTime);
 
-    if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}m ago';
-    } else {
-      return 'just now';
+      if (difference.inDays > 0) {
+        return '${difference.inDays}d ago';
+      } else if (difference.inHours > 0) {
+        return '${difference.inHours}h ago';
+      } else if (difference.inMinutes > 0) {
+        return '${difference.inMinutes}m ago';
+      } else {
+        return 'just now';
+      }
+    } catch (e) {
+      return '';
     }
   }
 }
