@@ -202,7 +202,7 @@ class _Menu2ScreenState extends State<Menu2Screen> {
                   : errorMessage != null
                       ? SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          child: Container(
+                          child: SizedBox(
                             height: MediaQuery.of(context).size.height * 0.6,
                             child: Center(
                               child: Column(
@@ -233,7 +233,7 @@ class _Menu2ScreenState extends State<Menu2Screen> {
                       : posts.isEmpty
                           ? SingleChildScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
-                              child: Container(
+                              child: SizedBox(
                                 height: MediaQuery.of(context).size.height * 0.6,
                                 child: const Center(
                                   child: Column(
