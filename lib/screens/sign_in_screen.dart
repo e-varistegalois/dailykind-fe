@@ -108,17 +108,17 @@ class _SignInScreenState extends State<SignInScreen> {
                   color: AppColors.primaryPink.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(60),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.waving_hand,
                   size: 60,
                   color: AppColors.pinkFont,
                 ),
               ),
               const SizedBox(height: 40),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     'DailyKind',
                     style: TextStyle(
                       fontFamily: 'CuteLove',

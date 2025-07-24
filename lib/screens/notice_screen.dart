@@ -50,7 +50,7 @@ class NoticeScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 18),
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         'Important Reminder',
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -60,10 +60,10 @@ class NoticeScreen extends StatelessWidget {
                           color: _darkOrange,
                         ),
                       ),
-                      SizedBox(height: 14),
+                      const SizedBox(height: 14),
                       RichText(
                         textAlign: TextAlign.center,
-                        text: TextSpan(
+                        text: const TextSpan(
                           children: [
                             TextSpan(
                               text: 'DailyKind',
