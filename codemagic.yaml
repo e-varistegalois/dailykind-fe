@@ -1,0 +1,43 @@
+workflows:
+  dailykind-debug:
+    name: DailyKind Debug Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      android_signing:
+        - keystore_reference: my-debug-keystore
+          keystore: my-debug.keystore 
+          keystore_password: android
+          key_alias: androiddebugkey
+          key_password: android
+      vars:
+        FIREBASE_APP_ID: 1:884358901774:android:6c7a60fb2942902904cc5f
+      flutter: stable
+      java: 11
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+        - pattern: 'develop'
+          include: true
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      
+      - name: Build APK
+        script: flutter build apk --debug
+      
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+    
+    publishing:
+      firebase_app_distribution:
+        app_id: 1:884358901774:android:6c7a60fb2942902904cc5f
+        groups:
+          - testers
+        release_notes: |
+          DailyKind Auto Build
+          Branch: $CM_BRANCH
+          Commit: $CM_COMMIT
