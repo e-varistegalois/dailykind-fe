@@ -12,7 +12,20 @@
           "package_name": "com.example.dailykind_fe"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "884358901774-kbu9m1prmjm8dmci71q323ou85ri17rn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailykind_fe",
+            "certificate_hash": "c7d0a390fe24d9d082c1a28d04c574db6fe6c0e6"
+          }
+        },
+        {
+          "client_id": "884358901774-559dqt0kvh1cektufbts6o327up0phvk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAzeazjI2EC_KWVy0kIoEFzI-o1ArB4Utk"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "884358901774-559dqt0kvh1cektufbts6o327up0phvk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "884358901774-itt7v3lk1f5dkjj8acne0bjmtet34p0n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dailykindFe"
+              }
+            }
+          ]
         }
       }
     }

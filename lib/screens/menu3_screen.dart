@@ -127,7 +127,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
             : errorMessage != null
                 ? SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    child: Container(
+                    child: SizedBox(
                       height: MediaQuery.of(context).size.height * 0.6,
                       child: Center(
                         child: Column(
@@ -167,7 +167,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
                 : userPosts.isEmpty
                     ? SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        child: Container(
+                        child: SizedBox(
                           height: MediaQuery.of(context).size.height * 0.6,
                           child: const Center(
                             child: Column(
