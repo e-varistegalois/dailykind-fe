@@ -2,7 +2,6 @@ class KindnessPost {
   final String id;
   final String challengeId;
   final String userId;
-  final String userName;
   final String? userProfileImage;
   final String content;
   final String? imageUrl;
@@ -14,7 +13,6 @@ class KindnessPost {
     required this.id,
     required this.challengeId,
     required this.userId,
-    required this.userName,
     this.userProfileImage,
     required this.content,
     this.imageUrl,
@@ -28,7 +26,6 @@ class KindnessPost {
       id: json['id'] ?? '',
       challengeId: json['challengeId'] ?? '',
       userId: json['userId'] ?? '',
-      userName: json['userName'] ?? 'Anonymous',
       userProfileImage: json['userProfileImage'],
       content: json['content'] ?? '',
       imageUrl: json['imageUrl'],
