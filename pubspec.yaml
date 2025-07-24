@@ -96,5 +96,5 @@ flutter:
         - asset: assets/fonts/Cute_Love.ttf
           weight: 600
 
-assets:
-  - assets/images/
+  assets:
+    - assets/images/

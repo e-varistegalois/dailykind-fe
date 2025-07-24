@@ -314,173 +314,140 @@ class _Menu2ScreenState extends State<Menu2Screen> {
     );
   }
 
-  Widget _buildPostCard(KindnessPost post) {
-    return GestureDetector(
-      onTap: () => _showPostDetail(post), // ← ADD TAP TO OPEN DETAIL
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image section
-            Expanded(
-              flex: 3,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                  color: AppColors.primaryBlue.withOpacity(0.1),
-                ),
-                child: post.imageUrl != null
-                    ? ClipRRect(
+Widget _buildPostCard(KindnessPost post) {
+  return GestureDetector(
+    onTap: () => _showPostDetail(post),
+    child: Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image section
+          Expanded(
+            flex: 3,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                color: AppColors.primaryBlue.withOpacity(0.1),
+              ),
+              child: post.imageUrl != null
+                  ? ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                      child: Image.network(
+                        post.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: AppColors.primaryBlue.withOpacity(0.1),
+                            child: const Icon(
+                              Icons.image,
+                              size: 48,
+                              color: AppColors.blueFont,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
                         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                        child: Image.network(
-                          post.imageUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: AppColors.primaryBlue.withOpacity(0.1),
-                              child: const Icon(
-                                Icons.image,
-                                size: 48,
-                                color: AppColors.blueFont,
-                              ),
-                            );
-                          },
-                        ),
-                      )
-                    : Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppColors.primaryBlue.withOpacity(0.2),
-                              AppColors.secondaryBlue.withOpacity(0.1),
-                            ],
-                          ),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.favorite,
-                            size: 32,
-                            color: AppColors.blueFont,
-                          ),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.primaryBlue.withOpacity(0.2),
+                            AppColors.secondaryBlue.withOpacity(0.1),
+                          ],
                         ),
                       ),
-              ),
-            ),
-            // Content section
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // User info
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 12,
-                          backgroundColor: AppColors.primaryBlue.withOpacity(0.2),
-                          backgroundImage: post.userProfileImage != null
-                              ? NetworkImage(post.userProfileImage!)
-                              : null,
-                          child: post.userProfileImage == null
-                              ? Text(
-                                  post.userName.isNotEmpty ? post.userName[0].toUpperCase() : 'U',
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.blueFont,
-                                  ),
-                                )
-                              : null,
+                      child: const Center(
+                        child: Icon(
+                          Icons.favorite,
+                          size: 32,
+                          color: AppColors.blueFont,
                         ),
-                        const SizedBox(width: 8),
+                      ),
+                    ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  
+                  // Content with "tap to read more" hint
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Expanded(
                           child: Text(
-                            post.userName,
+                            post.content,
                             style: const TextStyle(
                               fontFamily: 'Tommy',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12, 
                               color: AppColors.brownFont,
+                              height: 1.3,
                             ),
+                            maxLines: 3, 
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    // Content with "tap to read more" hint
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              post.content,
-                              style: const TextStyle(
-                                fontFamily: 'Tommy',
-                                fontWeight: FontWeight.w400,
-                                fontSize: 11,
-                                color: AppColors.brownFont,
-                                height: 1.3,
-                              ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
+                        if (post.content.length > 50)
+                          const Text(
+                            'Tap to read more...',
+                            style: TextStyle(
+                              fontFamily: 'Tommy',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10,
+                              color: AppColors.primaryBlue,
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
-                          if (post.content.length > 50) // Show hint if content is long
-                            const Text(
-                              'Tap to read more...',
-                              style: TextStyle(
-                                fontFamily: 'Tommy',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 10,
-                                color: AppColors.primaryBlue,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                        ],
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 8),
+                  
+                  // Bottom row with like and time
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      LikeButton(
+                        postId: post.id,
+                        likesCount: post.likesCount,
+                        isLiked: post.isLiked,
+                        onLikeChanged: _onLikeChanged, 
                       ),
-                    ),
-                    
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        LikeButton(
-                          postId: post.id,
-                          likesCount: post.likesCount,
-                          isLiked: post.isLiked,
-                          onLikeChanged: _onLikeChanged, 
+                      Text(
+                        _formatTime(post.createdAt),
+                        style: TextStyle(
+                          fontFamily: 'Tommy',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 9,
+                          color: AppColors.brownFont.withOpacity(0.6),
                         ),
-                        Text(
-                          _formatTime(post.createdAt),
-                          style: TextStyle(
-                            fontFamily: 'Tommy',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 9,
-                            color: AppColors.brownFont.withOpacity(0.6),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   String _formatTime(DateTime dateTime) {
     final now = DateTime.now();

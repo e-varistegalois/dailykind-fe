@@ -27,7 +27,6 @@ class PostDetailDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header with close button
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -36,47 +35,15 @@ class PostDetailDialog extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: AppColors.primaryBlue.withOpacity(0.2),
-                    backgroundImage: post.userProfileImage != null
-                        ? NetworkImage(post.userProfileImage!)
-                        : null,
-                    child: post.userProfileImage == null
-                        ? Text(
-                            post.userName.isNotEmpty ? post.userName[0].toUpperCase() : 'U',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.blueFont,
-                            ),
-                          )
-                        : null,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          post.userName,
-                          style: const TextStyle(
-                            fontFamily: 'Tommy',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: AppColors.blueFont,
-                          ),
-                        ),
-                        Text(
-                          _formatTime(post.createdAt),
-                          style: TextStyle(
-                            fontFamily: 'Tommy',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 11,
-                            color: AppColors.brownFont.withOpacity(0.6),
-                          ),
-                        ),
-                      ],
+                  const Expanded(
+                    child: Text(
+                      'Kindness Post',
+                      style: TextStyle(
+                        fontFamily: 'Tommy',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: AppColors.blueFont,
+                      ),
                     ),
                   ),
                   IconButton(
@@ -120,7 +87,7 @@ class PostDetailDialog extends StatelessWidget {
                           },
                         ),
                       ),
-                    // Text content section - NO MORE "Caption" LABEL
+                    // Text content section
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -139,8 +106,9 @@ class PostDetailDialog extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                           ],
-                          // Like button
+                          // Like button and timestamp
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               LikeButton(
                                 postId: post.id,
@@ -148,7 +116,15 @@ class PostDetailDialog extends StatelessWidget {
                                 isLiked: post.isLiked,
                                 onLikeChanged: onLikeChanged,
                               ),
-                              const Spacer(),
+                              Text(
+                                _formatTime(post.createdAt),
+                                style: TextStyle(
+                                  fontFamily: 'Tommy',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 10,
+                                  color: AppColors.brownFont.withOpacity(0.6),
+                                ),
+                              ),
                             ],
                           ),
                         ],
