@@ -67,6 +67,85 @@ class _Menu1ScreenState extends State<Menu1Screen> {
     }
   }
 
+  Widget _buildStatCard(String emoji, String number, String label) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.yellowFont.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            emoji,
+            style: const TextStyle(fontSize: 24),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            number,
+            style: const TextStyle(
+              fontFamily: 'Tommy',
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              color: AppColors.yellowFont,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Tommy',
+              fontWeight: FontWeight.w500,
+              fontSize: 11,
+              color: AppColors.brownFont.withOpacity(0.7),
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildKindnessIdea(String emoji, String idea) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppColors.primaryBlue.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Text(
+            emoji,
+            style: const TextStyle(fontSize: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              idea,
+              style: TextStyle(
+                fontFamily: 'Tommy',
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                color: AppColors.brownFont.withOpacity(0.8),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,6 +304,191 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                               color: AppColors.yellowFont,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            // Daily Kindness Tips
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primaryPink.withOpacity(0.1),
+                    AppColors.primaryPink.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.primaryPink.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryPink,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.tips_and_updates,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Daily Kindness Tips',
+                          style: TextStyle(
+                            fontFamily: 'Tommy',
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryPink,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Tip cards
+                    ...[
+                      '💝 Smile at a stranger - it costs nothing but can brighten their entire day',
+                      '🌱 Hold the door open for someone behind you',
+                      '☕ Buy coffee for the person in line behind you',
+                      '📝 Write a thank you note to someone who helped you',
+                    ].map((tip) => Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppColors.primaryPink.withOpacity(0.1),
+                        ),
+                      ),
+                      child: Text(
+                        tip,
+                        style: TextStyle(
+                          fontFamily: 'Tommy',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                          color: AppColors.brownFont.withOpacity(0.9),
+                          height: 1.4,
+                        ),
+                      ),
+                    )),
+                  ],
+                ),
+              ),
+            ),
+            
+            // Quick Kindness Ideas
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primaryBlue.withOpacity(0.1),
+                    AppColors.primaryBlue.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.primaryBlue.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryBlue,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.shuffle,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Quick Kindness Ideas',
+                          style: TextStyle(
+                            fontFamily: 'Tommy',
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primaryBlue,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          const Text(
+                            '🎲',
+                            style: TextStyle(fontSize: 32),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text(
+                            'Need inspiration? Here\'s a random act of kindness:',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Tommy',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                              color: AppColors.brownFont,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryBlue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'Send a positive message to someone who inspired you recently',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Tommy',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: AppColors.primaryBlue,
+                              ),
                             ),
                           ),
                         ],

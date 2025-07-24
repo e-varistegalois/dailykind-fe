@@ -322,20 +322,20 @@ Widget _buildPostCard(KindnessPost post) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image section
-          Expanded(
-            flex: 3,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                color: AppColors.primaryBlue.withOpacity(0.1),
-              ),
-              child: post.imageUrl != null
-                  ? ClipRRect(
+      child: post.imageUrl != null
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image section
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                      color: AppColors.primaryBlue.withOpacity(0.1),
+                    ),
+                    child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                       child: Image.network(
                         post.imageUrl!,
@@ -351,100 +351,175 @@ Widget _buildPostCard(KindnessPost post) {
                           );
                         },
                       ),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            AppColors.primaryBlue.withOpacity(0.2),
-                            AppColors.secondaryBlue.withOpacity(0.1),
-                          ],
-                        ),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.favorite,
-                          size: 32,
-                          color: AppColors.blueFont,
-                        ),
-                      ),
                     ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  
-                  // Content with "tap to read more" hint
-                  Expanded(
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Content with "tap to read more" hint
                         Expanded(
-                          child: Text(
-                            post.content,
-                            style: const TextStyle(
-                              fontFamily: 'Tommy',
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12, 
-                              color: AppColors.brownFont,
-                              height: 1.3,
-                            ),
-                            maxLines: 3, 
-                            overflow: TextOverflow.ellipsis,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  post.content,
+                                  style: const TextStyle(
+                                    fontFamily: 'Tommy',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12, 
+                                    color: AppColors.brownFont,
+                                    height: 1.3,
+                                  ),
+                                  maxLines: 3, 
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (post.content.length > 50)
+                                const Text(
+                                  'Tap to read more...',
+                                  style: TextStyle(
+                                    fontFamily: 'Tommy',
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 10,
+                                    color: AppColors.primaryBlue,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                        if (post.content.length > 50)
-                          const Text(
-                            'Tap to read more...',
-                            style: TextStyle(
-                              fontFamily: 'Tommy',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10,
-                              color: AppColors.primaryBlue,
-                              fontStyle: FontStyle.italic,
+                        
+                        const SizedBox(height: 8),
+                        
+                        // Bottom row with like and time
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            LikeButton(
+                              postId: post.id,
+                              likesCount: post.likesCount,
+                              isLiked: post.isLiked,
+                              onLikeChanged: _onLikeChanged, 
                             ),
-                          ),
+                            Text(
+                              _formatTime(post.createdAt),
+                              style: TextStyle(
+                                fontFamily: 'Tommy',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 9,
+                                color: AppColors.brownFont.withOpacity(0.6),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  
-                  const SizedBox(height: 8),
-                  
-                  // Bottom row with like and time
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      LikeButton(
-                        postId: post.id,
-                        likesCount: post.likesCount,
-                        isLiked: post.isLiked,
-                        onLikeChanged: _onLikeChanged, 
+                ),
+              ],
+            )
+          : // Text-only post - full height text
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primaryBlue.withOpacity(0.05),
+                    AppColors.secondaryBlue.withOpacity(0.02),
+                  ],
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Text content taking most space
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Large quote icon
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryBlue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.format_quote,
+                              color: AppColors.blueFont,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Expanded(
+                            child: Text(
+                              post.content,
+                              style: const TextStyle(
+                                fontFamily: 'Tommy',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                                color: AppColors.brownFont,
+                                height: 1.4,
+                              ),
+                              maxLines: 8,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (post.content.length > 100)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 4),
+                              child: Text(
+                                'Tap to read full story...',
+                                style: TextStyle(
+                                  fontFamily: 'Tommy',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                  color: AppColors.primaryBlue,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                      Text(
-                        _formatTime(post.createdAt),
-                        style: TextStyle(
-                          fontFamily: 'Tommy',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 9,
-                          color: AppColors.brownFont.withOpacity(0.6),
+                    ),
+                    
+                    const SizedBox(height: 12),
+                    
+                    // Bottom row with like and time
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LikeButton(
+                          postId: post.id,
+                          likesCount: post.likesCount,
+                          isLiked: post.isLiked,
+                          onLikeChanged: _onLikeChanged, 
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Text(
+                          _formatTime(post.createdAt),
+                          style: TextStyle(
+                            fontFamily: 'Tommy',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 9,
+                            color: AppColors.brownFont.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
     ),
   );
 }

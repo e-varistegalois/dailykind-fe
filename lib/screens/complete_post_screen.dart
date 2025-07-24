@@ -336,7 +336,7 @@ class _CompletePostScreenState extends State<CompletePostScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Required to complete your post',
+                            'Add photo or text below to complete',
                             style: TextStyle(
                               fontFamily: 'Tommy',
                               color: AppColors.brownFont.withOpacity(0.6),
@@ -382,7 +382,7 @@ class _CompletePostScreenState extends State<CompletePostScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Tell us about your experience completing this challenge ✨',
+              'Share your experience, thoughts, or describe how you completed this challenge ✨',
               style: TextStyle(
                 fontFamily: 'Tommy',
                 color: AppColors.brownFont.withOpacity(0.7),
@@ -394,7 +394,7 @@ class _CompletePostScreenState extends State<CompletePostScreen> {
               controller: _textController,
               maxLines: 4,
               decoration: InputDecoration(
-                hintText: 'Share your experience, feelings, or what you learned from this challenge...',
+                hintText: 'Describe your act of kindness, share what you learned, or tell your story...',
                 hintStyle: TextStyle(
                   fontFamily: 'Tommy',
                   color: AppColors.brownFont.withOpacity(0.5),
@@ -420,7 +420,42 @@ class _CompletePostScreenState extends State<CompletePostScreen> {
                 fontSize: 14,
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
+            
+            // Info section
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.yellowFont.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.yellowFont.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: AppColors.yellowFont,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Add a photo OR write about your experience (or both!) to complete your post',
+                      style: TextStyle(
+                        fontFamily: 'Tommy',
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.yellowFont,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
             
             // Submit Button
             SizedBox(

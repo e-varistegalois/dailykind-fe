@@ -241,6 +241,13 @@ class _Menu3ScreenState extends State<Menu3Screen> {
   }
 
   Widget _buildDraftCard(Map<String, dynamic> post) {
+    // Debug: print all available keys and values
+    debugPrint('🎯 Draft card data keys: ${post.keys.toList()}');
+    debugPrint('🎯 challengeContent: ${post['challengeContent']}');
+    debugPrint('🎯 challenge content: ${post['challenge']?['content']}');
+    debugPrint('🎯 content: ${post['content']}');
+    debugPrint('🎯 challengeId: ${post['challengeId']}');
+    
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -309,7 +316,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
             ),
             const SizedBox(height: 12),
             Text(
-              post['challenge']?['content'] ?? post['content'] ?? 'Challenge',
+              post['challenge']?['content'] ?? post['content'] ?? 'Complete this challenge',
               style: const TextStyle(
                 fontFamily: 'Tommy',
                 fontWeight: FontWeight.w500,
@@ -329,7 +336,7 @@ class _Menu3ScreenState extends State<Menu3Screen> {
                     MaterialPageRoute(
                       builder: (context) => CompletePostScreen(
                         challengeId: post['challengeId'],
-                        challengeContent: post['content'] ?? 'Complete this challenge',
+                        challengeContent: post['challenge']?['content'] ?? 'Complete this challenge',
                         postId: post['id'],
                       ),
                     ),
