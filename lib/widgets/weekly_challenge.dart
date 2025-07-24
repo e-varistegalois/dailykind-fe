@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/challenge.dart';
 import '../constants/app_colors.dart';
+import '../services/post_service.dart';
+import '../screens/complete_post_screen.dart';
 
 class WeeklyChallenge extends StatelessWidget {
   final Challenge challenge;
@@ -10,6 +12,201 @@ class WeeklyChallenge extends StatelessWidget {
     super.key,
     required this.challenge,
   });
+
+  Future<void> _showChallengeOptionsDialog(BuildContext context) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            'Accept Challenge',
+            style: TextStyle(
+              fontFamily: 'Tommy',
+              fontWeight: FontWeight.w700,
+              color: AppColors.brownFont,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Great! You\'ve decided to take on this challenge. When would you like to start?',
+                style: TextStyle(
+                  fontFamily: 'Tommy',
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.brownFont.withOpacity(0.8),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              // Do it now button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    // Show form immediately for "Do it now"
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CompletePostScreen(
+                          challengeId: challenge.id,
+                          challengeContent: challenge.content,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.play_arrow, color: Colors.white),
+                  label: const Text(
+                    'Do it right now!',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryPink,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Do it later button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await _acceptChallenge(context, 'DRAFT');
+                  },
+                  icon: Icon(Icons.schedule, color: AppColors.primaryPink),
+                  label: Text(
+                    'Save for later',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryPink,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: AppColors.primaryPink),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontFamily: 'Tommy',
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.brownFont.withOpacity(0.6),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _acceptChallenge(BuildContext context, String action) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    if (action == 'DO_NOW') {
+      // For "Do it now", go directly to the form without creating a draft
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Let\'s create your post! 🚀'),
+          backgroundColor: AppColors.primaryPink,
+          duration: Duration(seconds: 1),
+        ),
+      );
+      
+      // Navigate to create post screen immediately
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CompletePostScreen(
+              challengeId: challenge.id,
+              challengeContent: challenge.content,
+            ),
+          ),
+        );
+      });
+      return;
+    }
+
+    // For "Save for later", create a draft
+    try {
+      // Show loading
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 16),
+              Text('Saving challenge...'),
+            ],
+          ),
+          backgroundColor: AppColors.primaryPink,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Call API to create draft with placeholder text
+      await PostService.createDraftPost(
+        userId: user.uid,
+        challengeId: challenge.id,
+        text: 'Draft: Ready to complete this challenge!', // Placeholder text
+      );
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Challenge saved to your Bloom Board! You can complete it anytime 📝'),
+          backgroundColor: AppColors.primaryPink,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Oops! Something went wrong. Please try again.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -186,13 +383,8 @@ class WeeklyChallenge extends StatelessWidget {
                           },
                         );
                       } else {
-                        // User is logged in, accept the challenge
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Challenge accepted! Good luck! 🌟'),
-                            backgroundColor: AppColors.primaryPink,
-                          ),
-                        );
+                        // User is logged in, show challenge options dialog
+                        _showChallengeOptionsDialog(context);
                       }
                     },
                     style: ElevatedButton.styleFrom(

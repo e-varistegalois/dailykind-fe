@@ -158,17 +158,6 @@ class _Menu2ScreenState extends State<Menu2Screen> {
                       : AppColors.brownFont.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
-                  currentUser != null ? 'Logged In' : 'Guest',
-                  style: TextStyle(
-                    fontFamily: 'Tommy',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 10,
-                    color: currentUser != null 
-                        ? AppColors.blueFont
-                        : AppColors.brownFont,
-                  ),
-                ),
               ),
             ),
           ),

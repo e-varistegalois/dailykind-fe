@@ -87,7 +87,7 @@ class _Menu1ScreenState extends State<Menu1Screen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -135,18 +135,138 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                           ? WeeklyChallenge(challenge: challenge!)
                           : const SizedBox.shrink(),
             ),
-            // Coming Soon placeholder
-            const Expanded(
-              child: Center(
-                child: Text(
-                  'More content coming soon!',
-                  style: TextStyle(
-                    fontFamily: 'Tommy',
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.brownFont,
-                    fontSize: 18,
-                  ),
+            
+            // Motivational Section
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.yellowFont.withOpacity(0.1),
+                    AppColors.primaryPink.withOpacity(0.05),
+                  ],
                 ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.yellowFont.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // Icon
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.yellowFont,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Main quote
+                    const Text(
+                      '"Small acts of kindness create ripples of hope that can change the world"',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'CuteLove',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                        color: AppColors.brownFont,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    
+                    // Subtitle
+                    Text(
+                      'Every kind act you share helps build a more compassionate community. You\'re making a difference! ✨',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Tommy',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: AppColors.brownFont.withOpacity(0.8),
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Stats or fun fact
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.yellowFont.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.lightbulb_outline,
+                            color: AppColors.yellowFont,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Kindness is contagious - spread it everywhere!',
+                            style: TextStyle(
+                              fontFamily: 'Tommy',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                              color: AppColors.yellowFont,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            // Coming Soon placeholder
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.auto_awesome,
+                    size: 48,
+                    color: AppColors.primaryPink.withOpacity(0.6),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'More inspiring content coming soon!',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.brownFont,
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Stay tuned for daily inspiration and kindness tips',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.brownFont.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           ],
