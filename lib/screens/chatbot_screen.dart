@@ -270,24 +270,18 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: personalities.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  childAspectRatio: 1.1,
-                ),
-                itemBuilder: (context, index) {
-                  final p = personalities[index];
-                  return MouseRegion(
-                    cursor: isLoading ? SystemMouseCursors.forbidden : SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: isLoading ? null : () => _handleNewChat(p['label']),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
+              Wrap(
+                spacing: 20,
+                runSpacing: 20,
+                alignment: WrapAlignment.center,
+                children: personalities.map((p) {
+                  return SizedBox(
+                    width: (MediaQuery.of(context).size.width - 88) / 2,
+                    height: 180,
+                    child: MouseRegion(
+                      cursor: isLoading ? SystemMouseCursors.forbidden : SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: isLoading ? null : () => _handleNewChat(p['label']),
                         child: Card(
                           elevation: 0,
                           color: AppColors.primaryTosca.withOpacity(0.4),
@@ -295,11 +289,10 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(12.0),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                // Gambar personality tanpa kotak
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
                                   child: Image.asset(
@@ -328,18 +321,20 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                                   style: const TextStyle(
                                     fontFamily: 'Tommy',
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 16,
+                                    fontSize: 15,
                                     color: AppColors.brownFont,
                                   ),
                                 ),
-                                const SizedBox(height: 6),
+                                const SizedBox(height: 4),
                                 Text(
                                   p['desc'],
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     fontFamily: 'Tommy',
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 13,
-                                    color: Color(0xB3A67C52), // AppColors.brownFont.withOpacity(0.7)
+                                    fontSize: 12,
+                                    color: Color(0xB3A67C52),
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -350,8 +345,8 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
                       ),
                     ),
                   );
-                },
-              ),
+                }).toList(),
+              ) 
             ],
           ),
         ),
