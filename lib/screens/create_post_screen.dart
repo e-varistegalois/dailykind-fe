@@ -89,12 +89,108 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       Navigator.of(context).pop();
     } catch (e) {
       String errorMessage = e.toString();
-      
-      // Show error snackbar for all errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to share post: $errorMessage'),
-          backgroundColor: Colors.red,
+  
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.red.shade50,
+                  Colors.red.shade100.withOpacity(0.5),
+                ],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Error Icon
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade100,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Icon(
+                      Icons.error_outline,
+                      color: Colors.red.shade600,
+                      size: 32,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Title
+                  const Text(
+                    'Oops! Something went wrong',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      color: AppColors.brownFont,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Error Message
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.red.shade200,
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      '$errorMessage',
+                      style: const TextStyle(
+                        fontFamily: 'Tommy',
+                        fontSize: 14,
+                        color: AppColors.brownFont,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // OK Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryPink,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Try Again',
+                        style: TextStyle(
+                          fontFamily: 'Tommy',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       );
     } finally {
