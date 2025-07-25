@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
+import 'dart:io' if (dart.library.html) 'dart:html';
 
 class ImagePickerUtils {
   static final ImagePicker _picker = ImagePicker();
@@ -58,8 +59,6 @@ class ImagePickerUtils {
   /// Returns XFile for web compatibility, File for mobile
   static Future<dynamic> _pickImage(ImageSource source) async {
     try {
-      debugPrint('Starting image picker with source: $source');
-      
       final XFile? pickedFile = await _picker.pickImage(
         source: source,
         maxWidth: 1920,
@@ -67,29 +66,24 @@ class ImagePickerUtils {
         imageQuality: 85,
       );
 
-      debugPrint('Image picker result: ${pickedFile?.path}');
-
       if (pickedFile != null) {
-        // Always return XFile for consistency across platforms
-        debugPrint('Returning XFile for platform: ${kIsWeb ? 'web' : 'mobile'}');
-        return pickedFile;
+        if (kIsWeb) {
+          // Return XFile for web
+          return pickedFile;
+        } else {
+          // Return File for mobile/desktop
+          return File(pickedFile.path);
+        }
       }
-      debugPrint('No image selected');
       return null;
     } catch (e) {
       debugPrint('Error picking image: $e');
-      
-      // Check for specific iOS permission errors
-      if (e.toString().contains('photo_access_denied')) {
-        throw Exception('Photo library access denied. Please enable access in Settings > Privacy & Security > Photos.');
-      } else if (e.toString().contains('camera_access_denied')) {
-        throw Exception('Camera access denied. Please enable access in Settings > Privacy & Security > Camera.');
-      } else if (e.toString().contains('channel-error') || e.toString().contains('Unable to establish connection')) {
-        throw Exception('Image picker service unavailable. Please restart the app and try again.');
+      // If permission is denied, show a helpful message
+      if (e.toString().contains('photo_access_denied') || 
+          e.toString().contains('camera_access_denied')) {
+        debugPrint('Permission denied. Please enable camera/photo access in Settings.');
       }
-      
-      // Re-throw the original error for other cases
-      rethrow;
+      return null;
     }
   }
 
