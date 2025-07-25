@@ -34,6 +34,16 @@ class _LikeButtonState extends State<LikeButton> {
   }
 
   @override
+  void didUpdateWidget(LikeButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update local state when widget properties change
+    if (oldWidget.isLiked != widget.isLiked || oldWidget.likesCount != widget.likesCount) {
+      _isLiked = widget.isLiked;
+      _likesCount = widget.likesCount;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _handleLike(context),

@@ -117,14 +117,15 @@ class _Menu2ScreenState extends State<Menu2Screen> {
   }
 
   // Show post detail dialog
-  void _showPostDetail(KindnessPost post) {
-    showDialog(
+  void _showPostDetail(KindnessPost post) async {
+    await showDialog(
       context: context,
       builder: (context) => PostDetailDialog(
         post: post,
         onLikeChanged: _onLikeChanged,
       ),
     );
+    _onLikeChanged();
   }
 
   @override
