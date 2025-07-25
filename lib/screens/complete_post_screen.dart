@@ -1,9 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 import '../constants/app_colors.dart';
 import '../services/post_service.dart';
 import '../utils/image_picker_utils.dart';
+import '../utils/platform_image.dart';
 
 class CompletePostScreen extends StatefulWidget {
   final String? challengeId;
@@ -23,7 +24,7 @@ class CompletePostScreen extends StatefulWidget {
 
 class _CompletePostScreenState extends State<CompletePostScreen> {
   final TextEditingController _textController = TextEditingController();
-  File? _selectedImage;
+  XFile? _selectedImage; // Always XFile from image_picker
   bool _isLoading = false;
 
   @override
@@ -387,8 +388,8 @@ class _CompletePostScreenState extends State<CompletePostScreen> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              _selectedImage!,
+                            child: PlatformImage(
+                              imageFile: _selectedImage!,
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: double.infinity,

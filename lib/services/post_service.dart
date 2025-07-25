@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart' as http_parser;
+import 'package:image_picker/image_picker.dart';
 import '../constants/globals.dart';
 import './challenge_service.dart';
 
@@ -17,14 +18,41 @@ class ContentModerationException implements Exception {
 class PostService {
   static const String _baseUrl = '$apiBaseUrl/post';
 
+  // Helper function to get MIME type from file extension
+  static String _getMimeType(String filename) {
+    final extension = filename.toLowerCase().split('.').last;
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'bmp':
+        return 'image/bmp';
+      default:
+        // Default to PNG if we can't determine
+        return 'image/png';
+    }
+  }
+
   // Upload post with image (published status)
   static Future<Map<String, dynamic>> uploadPost({
     required String userId,
     required String challengeId,
     required String text,
-    required File image,
+    required dynamic image, // Can be File or XFile
   }) async {
     try {
+      debugPrint('uploadPost called with:');
+      debugPrint('- userId: $userId');
+      debugPrint('- challengeId: $challengeId');
+      debugPrint('- text: "$text"');
+      debugPrint('- image type: ${image.runtimeType}');
+      
       final request = http.MultipartRequest(
         'POST',
         Uri.parse('$_baseUrl/upload-post'),
@@ -36,13 +64,38 @@ class PostService {
       request.fields['content'] = text;
       request.fields['status'] = 'PUBLISHED';
       
-      // Add image file
-      request.files.add(
-        await http.MultipartFile.fromPath(
+      debugPrint('Form fields: ${request.fields}');
+      
+      // Add image file - handle both File and XFile
+      http.MultipartFile multipartFile;
+      if (kIsWeb || image is XFile) {
+        // Web or XFile
+        final XFile xFile = image is XFile ? image : XFile(image.path);
+        final bytes = await xFile.readAsBytes();
+        final mimeType = _getMimeType(xFile.name);
+        multipartFile = http.MultipartFile.fromBytes(
+          'image',
+          bytes,
+          filename: xFile.name,
+          contentType: http_parser.MediaType.parse(mimeType),
+        );
+      } else {
+        // Mobile/Desktop - File
+        final mimeType = _getMimeType(image.path);
+        multipartFile = await http.MultipartFile.fromPath(
           'image',
           image.path,
-        ),
-      );
+          contentType: http_parser.MediaType.parse(mimeType),
+        );
+      }
+      
+      request.files.add(multipartFile);
+      
+      debugPrint('Multipart file added:');
+      debugPrint('- field name: ${multipartFile.field}');
+      debugPrint('- filename: ${multipartFile.filename}');
+      debugPrint('- content type: ${multipartFile.contentType}');
+      debugPrint('- length: ${multipartFile.length}');
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
@@ -118,7 +171,7 @@ class PostService {
     required String userId,
     required String challengeId,
     required String text,
-    File? image,
+    dynamic image, // Can be File or XFile
   }) async {
     try {
       final request = http.MultipartRequest(
@@ -132,14 +185,30 @@ class PostService {
       request.fields['content'] = text;
       request.fields['status'] = 'PUBLISHED'; // Important: mark as published when updating draft
       
-      // Add image file if provided
+      // Add image file if provided - handle both File and XFile
       if (image != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
+        http.MultipartFile multipartFile;
+        if (kIsWeb || image is XFile) {
+          // Web or XFile
+          final XFile xFile = image is XFile ? image : XFile(image.path);
+          final bytes = await xFile.readAsBytes();
+          final mimeType = _getMimeType(xFile.name);
+          multipartFile = http.MultipartFile.fromBytes(
+            'image',
+            bytes,
+            filename: xFile.name,
+            contentType: http_parser.MediaType.parse(mimeType),
+          );
+        } else {
+          // Mobile/Desktop - File
+          final mimeType = _getMimeType(image.path);
+          multipartFile = await http.MultipartFile.fromPath(
             'image',
             image.path,
-          ),
-        );
+            contentType: http_parser.MediaType.parse(mimeType),
+          );
+        }
+        request.files.add(multipartFile);
       }
 
       final response = await request.send();

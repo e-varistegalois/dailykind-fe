@@ -1,11 +1,11 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 import '../constants/app_colors.dart';
 import '../models/challenge.dart';
 import '../services/post_service.dart';
 import '../utils/image_picker_utils.dart';
+import '../utils/platform_image.dart';
 
 class CreatePostScreen extends StatefulWidget {
   final Challenge challenge;
@@ -21,7 +21,7 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _textController = TextEditingController();
-  File? _selectedImage;
+  XFile? _selectedImage; // Always XFile from image_picker
   bool _isLoading = false;
 
   @override
@@ -31,11 +31,69 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _selectImage() async {
-    final image = await ImagePickerUtils.showImageSourceDialog(context);
-    if (image != null) {
-      setState(() {
-        _selectedImage = image;
-      });
+    try {
+      final image = await ImagePickerUtils.showImageSourceDialog(context);
+      if (image != null && mounted) {
+        debugPrint('Image selected: ${image.runtimeType}');
+        
+        // Check file properties safely
+        try {
+          // Check if it has length method (both XFile and File have this)
+          if (image.runtimeType.toString().contains('XFile')) {
+            final size = await image.length();
+            debugPrint('XFile size: $size bytes');
+            debugPrint('XFile path: ${image.path}');
+          } else {
+            // For File or other types that might have these methods
+            try {
+              final size = await image.length();
+              debugPrint('Image size: $size bytes');
+              debugPrint('Image path: ${image.path}');
+            } catch (e) {
+              debugPrint('Could not get size: $e');
+            }
+          }
+        } catch (e) {
+          debugPrint('Error checking image properties: $e');
+        }
+        
+        if (mounted) {
+          setState(() {
+            _selectedImage = image as XFile;
+          });
+        }
+      } else {
+        debugPrint('No image selected or widget unmounted');
+      }
+    } catch (e) {
+      debugPrint('Error in _selectImage: $e');
+      if (mounted) {
+        String message = 'Unable to access camera or photo library.';
+        
+        // Handle specific error messages
+        if (e.toString().contains('Photo library access denied') || 
+            e.toString().contains('Camera access denied')) {
+          message = e.toString();
+        } else if (e.toString().contains('Image picker service unavailable')) {
+          message = e.toString();
+        } else if (e.toString().contains('channel-error') || 
+                   e.toString().contains('Unable to establish connection')) {
+          message = 'Image picker service unavailable. Please restart the app and try again.';
+        }
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -43,27 +101,43 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     final hasImage = _selectedImage != null;
     final hasText = _textController.text.trim().isNotEmpty;
     
+    debugPrint('Submit post - hasImage: $hasImage, hasText: $hasText');
+    if (hasImage) {
+      debugPrint('Selected image path: ${_selectedImage!.path}');
+      try {
+        final exists = await _selectedImage!.exists();
+        debugPrint('Image exists: $exists');
+      } catch (e) {
+        debugPrint('Error checking image: $e');
+      }
+    }
+    debugPrint('Text content: "${_textController.text}"');
+    
     // At least one of image or text must be provided
     if (!hasImage && !hasText) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please add either an image or some text to share your story'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please add either an image or some text to share your story'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
       return;
     }
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
 
     try {
       if (hasImage) {
-        // Post with image
+        // Post with image (and optional text)
         await PostService.uploadPost(
           userId: user.uid,
           challengeId: widget.challenge.id,
@@ -71,7 +145,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           image: _selectedImage!,
         );
       } else {
-        // Post with text only
+        // Post with text only (no image)
         await PostService.uploadTextPost(
           userId: user.uid,
           challengeId: widget.challenge.id,
@@ -79,19 +153,22 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         );
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Post shared successfully! 🎉'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Post shared successfully! 🎉'),
+            backgroundColor: Colors.green,
+          ),
+        );
 
-      Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }
     } catch (e) {
       String errorMessage = e.toString();
-  
-      showDialog(
-        context: context,
+      
+      if (mounted) {
+        showDialog(
+          context: context,
         builder: (context) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           contentPadding: EdgeInsets.zero,
@@ -190,13 +267,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ],
               ),
             ),
-          ),
-        ),
-      );
+          ),          ),
+        );
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -340,8 +419,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 child: _selectedImage != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          _selectedImage!,
+                        child: PlatformImage(
+                          imageFile: _selectedImage!,
                           fit: BoxFit.cover,
                         ),
                       )
@@ -378,14 +457,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             const SizedBox(height: 24),
             
             // Caption
-            const Text(
-              'Tell Your Story',
-              style: TextStyle(
-                fontFamily: 'Tommy',
-                fontWeight: FontWeight.w600,
-                color: AppColors.brownFont,
-                fontSize: 16,
-              ),
+            Row(
+              children: [
+                const Text(
+                  'Tell Your Story',
+                  style: TextStyle(
+                    fontFamily: 'Tommy',
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.brownFont,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryPink.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Optional',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.primaryPink,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             TextField(
@@ -409,6 +509,41 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               style: const TextStyle(
                 fontFamily: 'Tommy',
                 color: AppColors.brownFont,
+              ),
+            ),
+            const SizedBox(height: 24),
+            
+            // Info section
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.yellowFont.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.yellowFont.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: AppColors.yellowFont,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Add a photo OR write about your experience (or both!) to share your post',
+                      style: TextStyle(
+                        fontFamily: 'Tommy',
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.yellowFont,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
