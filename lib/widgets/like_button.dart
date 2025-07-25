@@ -4,7 +4,7 @@ import '../constants/app_colors.dart';
 import '../services/like_service.dart';
 import '../utils/dialog_utils.dart';
 
-class LikeButton extends StatelessWidget {
+class LikeButton extends StatefulWidget {
   final String postId;
   final int likesCount;
   final bool isLiked;
@@ -19,19 +19,34 @@ class LikeButton extends StatelessWidget {
   });
 
   @override
+  State<LikeButton> createState() => _LikeButtonState();
+}
+
+class _LikeButtonState extends State<LikeButton> {
+  late bool _isLiked;
+  late int _likesCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLiked = widget.isLiked;
+    _likesCount = widget.likesCount;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _handleLike(context),
       child: Row(
         children: [
           Icon(
-            isLiked ? Icons.favorite : Icons.favorite_border,
+            _isLiked ? Icons.favorite : Icons.favorite_border,
             size: 16,
-            color: isLiked ? Colors.red : AppColors.brownFont.withOpacity(0.6),
+            color: _isLiked ? Colors.red : AppColors.brownFont.withOpacity(0.6),
           ),
           const SizedBox(width: 4),
           Text(
-            '$likesCount',
+            '$_likesCount',
             style: TextStyle(
               fontFamily: 'Tommy',
               fontWeight: FontWeight.w500,
@@ -52,11 +67,21 @@ class LikeButton extends StatelessWidget {
       return;
     }
 
-    final success = await LikeService.toggleLike(postId, currentUser.uid);
+    setState(() {
+      _isLiked = !_isLiked;
+      _likesCount = _isLiked ? _likesCount + 1 : _likesCount - 1;
+    });
+
+    final success = await LikeService.toggleLike(widget.postId, currentUser.uid);
     
     if (success) {
-      onLikeChanged();
+      widget.onLikeChanged();
     } else {
+      setState(() {
+        _isLiked = !_isLiked;
+        _likesCount = _isLiked ? _likesCount + 1 : _likesCount - 1;
+      });
+      
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
