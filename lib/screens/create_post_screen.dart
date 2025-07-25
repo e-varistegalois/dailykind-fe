@@ -141,7 +141,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         await PostService.uploadPost(
           userId: user.uid,
           challengeId: widget.challenge.id,
-          text: _textController.text,
+          content: _textController.text,
           image: _selectedImage!,
         );
       } else {
@@ -149,7 +149,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         await PostService.uploadTextPost(
           userId: user.uid,
           challengeId: widget.challenge.id,
-          text: _textController.text,
+          content: _textController.text,
         );
       }
 

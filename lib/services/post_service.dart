@@ -43,14 +43,14 @@ class PostService {
   static Future<Map<String, dynamic>> uploadPost({
     required String userId,
     required String challengeId,
-    required String text,
+    required String content,
     required dynamic image, // Can be File or XFile
   }) async {
     try {
       debugPrint('uploadPost called with:');
       debugPrint('- userId: $userId');
       debugPrint('- challengeId: $challengeId');
-      debugPrint('- text: "$text"');
+      debugPrint('- content: "$content"');
       debugPrint('- image type: ${image.runtimeType}');
       
       final request = http.MultipartRequest(
@@ -61,7 +61,7 @@ class PostService {
       // Add form data with PUBLISHED status
       request.fields['user_id'] = userId;
       request.fields['challenge_id'] = challengeId;
-      request.fields['content'] = text;
+      request.fields['content'] = content;
       request.fields['status'] = 'PUBLISHED';
       
       debugPrint('Form fields: ${request.fields}');
@@ -123,9 +123,14 @@ class PostService {
   static Future<Map<String, dynamic>> uploadTextPost({
     required String userId,
     required String challengeId,
-    required String text,
+    required String content,
   }) async {
     try {
+      debugPrint('uploadTextPost called with:');
+      debugPrint('- userId: $userId');
+      debugPrint('- challengeId: $challengeId');
+      debugPrint('- content: "$content"');
+
       final request = http.MultipartRequest(
         'POST',
         Uri.parse('$_baseUrl/upload-post'),
@@ -134,8 +139,10 @@ class PostService {
       // Add form data with PUBLISHED status
       request.fields['user_id'] = userId;
       request.fields['challenge_id'] = challengeId;
-      request.fields['text'] = text;
+      request.fields['content'] = content; // Changed from 'text' to 'content'
       request.fields['status'] = 'PUBLISHED';
+      
+      debugPrint('Form fields: ${request.fields}');
       
       // No image file added for text-only posts
 
@@ -176,7 +183,7 @@ class PostService {
     try {
       final request = http.MultipartRequest(
         'PUT',
-        Uri.parse('$_baseUrl/$postId'),
+        Uri.parse('$_baseUrl/$postId'), // Correct endpoint: PUT /post/{postId}
       );
 
       // Add form data with PUBLISHED status (when updating draft, it becomes published)
@@ -419,6 +426,135 @@ class PostService {
     } catch (e) {
       debugPrint('Error creating draft: $e');
       throw Exception('Failed to create draft: $e');
+    }
+  }
+
+  // Complete post with image (published status) - uses 'text' field
+  static Future<Map<String, dynamic>> completePost({
+    required String userId,
+    required String challengeId,
+    required String text,
+    required dynamic image, // Can be File or XFile
+  }) async {
+    try {
+      debugPrint('completePost called with:');
+      debugPrint('- userId: $userId');
+      debugPrint('- challengeId: $challengeId');
+      debugPrint('- text: "$text"');
+      debugPrint('- image type: ${image.runtimeType}');
+      
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$_baseUrl/upload-post'), // POST for new post creation
+      );
+
+      // Add form data with PUBLISHED status
+      request.fields['user_id'] = userId;
+      request.fields['challenge_id'] = challengeId;
+      request.fields['text'] = text; // Using 'text' for complete post
+      request.fields['status'] = 'PUBLISHED';
+      
+      debugPrint('Form fields: ${request.fields}');
+      
+      // Add image file - handle both File and XFile
+      http.MultipartFile multipartFile;
+      if (kIsWeb || image is XFile) {
+        // Web or XFile
+        final XFile xFile = image is XFile ? image : XFile(image.path);
+        final bytes = await xFile.readAsBytes();
+        final mimeType = _getMimeType(xFile.name);
+        multipartFile = http.MultipartFile.fromBytes(
+          'image',
+          bytes,
+          filename: xFile.name,
+          contentType: http_parser.MediaType.parse(mimeType),
+        );
+      } else {
+        // Mobile/Desktop - File
+        final mimeType = _getMimeType(image.path);
+        multipartFile = await http.MultipartFile.fromPath(
+          'image',
+          image.path,
+          contentType: http_parser.MediaType.parse(mimeType),
+        );
+      }
+      
+      request.files.add(multipartFile);
+      
+      debugPrint('Multipart file added:');
+      debugPrint('- field name: ${multipartFile.field}');
+      debugPrint('- filename: ${multipartFile.filename}');
+      debugPrint('- content type: ${multipartFile.contentType}');
+      debugPrint('- length: ${multipartFile.length}');
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      debugPrint('Complete Post Response: ${response.statusCode}');
+      debugPrint('Response Body: $responseBody');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return json.decode(responseBody);
+      } else {
+        final errorData = json.decode(responseBody);
+        final message = errorData['message'] ?? 'Unknown error';
+        throw ContentModerationException(message);
+      }
+    } catch (e) {
+      if (e is ContentModerationException) {
+        rethrow;
+      }
+      debugPrint('Error completing post: $e');
+      throw Exception('Failed to complete post: $e');
+    }
+  }
+
+  // Complete post with text only (published status) - uses 'text' field
+  static Future<Map<String, dynamic>> completeTextPost({
+    required String userId,
+    required String challengeId,
+    required String text,
+  }) async {
+    try {
+      debugPrint('completeTextPost called with:');
+      debugPrint('- userId: $userId');
+      debugPrint('- challengeId: $challengeId');
+      debugPrint('- content: "$text"');
+      
+      final request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('$_baseUrl/upload-post'),
+      );
+
+      // Add form data with PUBLISHED status
+      request.fields['user_id'] = userId;
+      request.fields['challenge_id'] = challengeId;
+      request.fields['content'] = text; // Using 'text' for complete post
+      request.fields['status'] = 'PUBLISHED';
+      
+      debugPrint('Form fields: ${request.fields}');
+      
+      // No image file added for text-only posts
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      debugPrint('Complete Text Post Response: ${response.statusCode}');
+      debugPrint('Response Body: $responseBody');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return json.decode(responseBody);
+      } else {
+        final errorData = json.decode(responseBody);
+        final message = errorData['message'] ?? 'Unknown error';
+        throw ContentModerationException(message);
+      }
+    } catch (e) {
+      if (e is ContentModerationException) {
+        rethrow;
+      }
+      debugPrint('Error completing text post: $e');
+      throw Exception('Failed to complete text post: $e');
     }
   }
 }
