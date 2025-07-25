@@ -3,7 +3,7 @@ import '../constants/app_colors.dart';
 import '../models/kindness_post.dart';
 import 'like_button.dart';
 
-class PostDetailDialog extends StatelessWidget {
+class PostDetailDialog extends StatefulWidget {
   final KindnessPost post;
   final VoidCallback onLikeChanged;
 
@@ -12,6 +12,20 @@ class PostDetailDialog extends StatelessWidget {
     required this.post,
     required this.onLikeChanged,
   });
+
+  @override
+  State<PostDetailDialog> createState() => _PostDetailDialogState();
+}
+
+class _PostDetailDialogState extends State<PostDetailDialog> {
+  void _handleLikeChanged() {
+    // Call the parent's onLikeChanged callback
+    widget.onLikeChanged();
+    // Force rebuild of this dialog to reflect any state changes
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +77,14 @@ class PostDetailDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Image section
-                    if (post.imageUrl != null)
+                    if (widget.post.imageUrl != null)
                       Container(
                         width: double.infinity,
                         constraints: const BoxConstraints(
                           maxHeight: 300,
                         ),
                         child: Image.network(
-                          post.imageUrl!,
+                          widget.post.imageUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
@@ -93,9 +107,9 @@ class PostDetailDialog extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (post.content.isNotEmpty) ...[
+                          if (widget.post.content.isNotEmpty) ...[
                             Text(
-                              post.content,
+                              widget.post.content,
                               style: const TextStyle(
                                 fontFamily: 'Tommy',
                                 fontWeight: FontWeight.w400,
@@ -111,13 +125,13 @@ class PostDetailDialog extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               LikeButton(
-                                postId: post.id,
-                                likesCount: post.likesCount,
-                                isLiked: post.isLiked,
-                                onLikeChanged: onLikeChanged,
+                                postId: widget.post.id,
+                                likesCount: widget.post.likesCount,
+                                isLiked: widget.post.isLiked,
+                                onLikeChanged: _handleLikeChanged,
                               ),
                               Text(
-                                _formatTime(post.createdAt),
+                                _formatTime(widget.post.createdAt),
                                 style: TextStyle(
                                   fontFamily: 'Tommy',
                                   fontWeight: FontWeight.w400,
