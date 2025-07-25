@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../constants/app_colors.dart';
 import '../services/post_service.dart';
+import '../services/streak_service.dart';
 import '../screens/complete_post_screen.dart';
 
 class Menu3Screen extends StatefulWidget {
@@ -15,6 +16,7 @@ class Menu3Screen extends StatefulWidget {
 class _Menu3ScreenState extends State<Menu3Screen> {
   List<Map<String, dynamic>> draftPosts = [];
   List<Map<String, dynamic>> publishedPosts = [];
+  Map<String, dynamic>? streakData;
   bool isLoading = true;
   String? errorMessage;
 
@@ -40,22 +42,31 @@ class _Menu3ScreenState extends State<Menu3Screen> {
     }
 
     try {
-      final posts = await PostService.getUserPosts(userId: user.uid);
+      // Fetch posts and streak data in parallel
+      final results = await Future.wait([
+        PostService.getUserPosts(userId: user.uid),
+        StreakService.getUserStreak(userId: user.uid),
+      ]);
+      
+      final posts = results[0];
+      final streak = results[1];
       
       debugPrint('Fetched posts from service:');
       debugPrint('Blooming: ${posts['blooming']?.length ?? 0}');
       debugPrint('Bloomed: ${posts['bloomed']?.length ?? 0}');
+      debugPrint('Streak data: $streak');
       
       setState(() {
         draftPosts = posts['blooming'] ?? [];
         publishedPosts = posts['bloomed'] ?? [];
+        streakData = streak;
         isLoading = false;
       });
       
       debugPrint('State updated - draftPosts: ${draftPosts.length}, publishedPosts: ${publishedPosts.length}');
     } catch (e) {
       setState(() {
-        errorMessage = 'Error loading posts: ${e.toString()}';
+        errorMessage = 'Error loading data: ${e.toString()}';
         isLoading = false;
       });
     }
@@ -179,6 +190,9 @@ class _Menu3ScreenState extends State<Menu3Screen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Streak Card
+          if (streakData != null) _buildStreakCard(),
+          
           // Debug info
           if (draftPosts.isNotEmpty || publishedPosts.isNotEmpty)
             Container(
@@ -534,6 +548,115 @@ class _Menu3ScreenState extends State<Menu3Screen> {
         ],
       ),
     );
+  }
+
+  Widget _buildStreakCard() {
+    final currentStreak = streakData?['currentStreak'] ?? 0;
+    final totalChallenges = streakData?['totalChallengesParticipated'] ?? 0;
+    
+    String streakEmoji = _getStreakEmoji(currentStreak);
+    
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primaryPink.withOpacity(0.15),
+            AppColors.yellowFont.withOpacity(0.15),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.primaryPink.withOpacity(0.4),
+          width: 1.5,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            // Left side - emoji and streak number
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.primaryPink,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    streakEmoji,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '$currentStreak',
+                    style: const TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    currentStreak == 1 ? 'week' : 'weeks',
+                    style: const TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            
+            // Right side - info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Kindness Streak',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      color: AppColors.primaryPink,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '$totalChallenges total acts 💝',
+                    style: TextStyle(
+                      fontFamily: 'Tommy',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      color: AppColors.brownFont.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getStreakEmoji(int streak) {
+    if (streak == 0) return "🌱";
+    if (streak <= 3) return "🔥";
+    if (streak <= 7) return "⭐";
+    if (streak <= 15) return "🎉";
+    if (streak <= 30) return "🏆";
+    return "👑";
   }
 
   String _formatDate(String? dateString) {

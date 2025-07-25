@@ -119,7 +119,7 @@ class _Menu1ScreenState extends State<Menu1Screen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppColors.primaryBlue.withOpacity(0.2),
+          color: AppColors.primaryPink.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -407,13 +407,13 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppColors.primaryBlue.withOpacity(0.1),
-                    AppColors.primaryBlue.withOpacity(0.05),
+                    AppColors.primaryPink.withOpacity(0.1),
+                    AppColors.yellowFont.withOpacity(0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.primaryBlue.withOpacity(0.2),
+                  color: AppColors.primaryPink.withOpacity(0.3),
                   width: 1,
                 ),
               ),
@@ -441,7 +441,7 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                           style: TextStyle(
                             fontFamily: 'Tommy',
                             fontWeight: FontWeight.w700,
-                            color: AppColors.primaryBlue,
+                            color: Color(0xFF1A4480), // Darker blue
                             fontSize: 18,
                           ),
                         ),
@@ -477,7 +477,7 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryBlue.withOpacity(0.1),
+                              color: AppColors.yellowFont.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -487,7 +487,7 @@ class _Menu1ScreenState extends State<Menu1Screen> {
                                 fontFamily: 'Tommy',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
-                                color: AppColors.primaryBlue,
+                                color: Color(0xFF1A4480), // Darker blue
                               ),
                             ),
                           ),
