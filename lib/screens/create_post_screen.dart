@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../constants/app_colors.dart';
 import '../models/challenge.dart';
@@ -87,9 +88,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       Navigator.of(context).pop();
     } catch (e) {
+      String errorMessage = e.toString();
+      
+      // Show error snackbar for all errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to share post: ${e.toString()}'),
+          content: Text('Failed to share post: $errorMessage'),
           backgroundColor: Colors.red,
         ),
       );

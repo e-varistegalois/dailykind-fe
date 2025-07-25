@@ -5,6 +5,15 @@ import 'package:http/http.dart' as http;
 import '../constants/globals.dart';
 import './challenge_service.dart';
 
+// Custom exception for content moderation errors
+class ContentModerationException implements Exception {
+  final String message;
+  ContentModerationException(this.message);
+  
+  @override
+  String toString() => message; 
+}
+
 class PostService {
   static const String _baseUrl = '$apiBaseUrl/post';
 
@@ -44,9 +53,14 @@ class PostService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return json.decode(responseBody);
       } else {
-        throw Exception('Failed to create post: ${response.statusCode} - $responseBody');
+        final errorData = json.decode(responseBody);
+        final message = errorData['message'] ?? 'Unknown error';
+        throw ContentModerationException(message);
       }
     } catch (e) {
+      if (e is ContentModerationException) {
+        rethrow;
+      }
       debugPrint('Error creating post: $e');
       throw Exception('Failed to create post: $e');
     }
@@ -81,9 +95,18 @@ class PostService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return json.decode(responseBody);
       } else {
-        throw Exception('Failed to create text post: ${response.statusCode} - $responseBody');
+        // Parse the error response and throw just the message
+        final errorData = json.decode(responseBody);
+        final message = errorData['message'] ?? 'Unknown error';
+        // Throw a custom exception with just the message
+        throw ContentModerationException(message);
       }
     } catch (e) {
+      // If it's already our custom exception, just rethrow it
+      if (e is ContentModerationException) {
+        rethrow;
+      }
+      // For other errors (like network issues), wrap them
       debugPrint('Error creating text post: $e');
       throw Exception('Failed to create text post: $e');
     }
@@ -128,9 +151,15 @@ class PostService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return json.decode(responseBody);
       } else {
-        throw Exception('Failed to update post: ${response.statusCode} - $responseBody');
+        // Parse the error response and throw just the message
+        final errorData = json.decode(responseBody);
+        final message = errorData['message'] ?? 'Unknown error';
+        throw ContentModerationException(message);
       }
     } catch (e) {
+      if (e is ContentModerationException) {
+        rethrow;
+      }
       debugPrint('Error updating post: $e');
       throw Exception('Failed to update post: $e');
     }
