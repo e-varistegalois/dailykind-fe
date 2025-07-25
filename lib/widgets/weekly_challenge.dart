@@ -309,10 +309,9 @@ class WeeklyChallenge extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Check if user is logged in
+                    onPressed: () async {
                       final currentUser = FirebaseAuth.instance.currentUser;
-                      
+
                       if (currentUser == null) {
                         // User not logged in, show dialog to sign in
                         showDialog(
@@ -383,10 +382,67 @@ class WeeklyChallenge extends StatelessWidget {
                             );
                           },
                         );
-                      } else {
-                        // User is logged in, show challenge options dialog
-                        _showChallengeOptionsDialog(context);
+                        return;
                       }
+
+                      final challengeId = challenge.id;
+
+                      // 1. Get posts by user id
+                      final userPosts = await PostService.getAllUserPosts(userId: currentUser.uid);
+
+                      // 2. Cek apakah sudah pernah ikut challenge ini
+                      final alreadyParticipated = userPosts.any((post) => post['challengeId'] == challengeId);
+
+                      if (alreadyParticipated) {
+                        // 3. Tampilkan pop up notif
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: Colors.white,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(16)),
+                            ),
+                            title: const Text(
+                              'Already Participated',
+                              style: TextStyle(
+                                fontFamily: 'Tommy',
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.secondaryPink,
+                                fontSize: 20,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            content: const Text(
+                              'You have already participated in this challenge!',
+                              style: TextStyle(
+                                fontFamily: 'Tommy',
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.secondaryPink,
+                                fontSize: 16,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            actionsAlignment: MainAxisAlignment.center,
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text(
+                                  'OK',
+                                  style: TextStyle(
+                                    fontFamily: 'Tommy',
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.secondaryPink,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      }
+
+                      // 4. Jika belum pernah ikut, lanjutkan proses biasa
+                      _showChallengeOptionsDialog(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPink,
