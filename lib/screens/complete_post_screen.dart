@@ -78,7 +78,7 @@ class _CompletePostScreenState extends State<CompletePostScreen> {
         // Creating new post
         if (hasImage) {
           // Post with image
-          await PostService.uploadPost(
+          await PostService.completePost(
             userId: user.uid,
             challengeId: widget.challengeId!,
             text: _textController.text,
@@ -86,7 +86,7 @@ class _CompletePostScreenState extends State<CompletePostScreen> {
           );
         } else {
           // Post with text only
-          await PostService.uploadTextPost(
+          await PostService.completeTextPost(
             userId: user.uid,
             challengeId: widget.challengeId!,
             text: _textController.text,
